@@ -15,6 +15,15 @@
 - Possibility to test response status code
 - Possibility to test the body response using a json path
 
+#Add the maven dependency
+```
+    <dependency>
+        <groupId>fr.redfroggy.test.bdd</groupId>
+        <artifactId>cucumber-gherkin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
+```
+
 #Feature template
 - In order to successfully use this library, you need to respect the following template for your .feature files
 (an example file can be found under src/test/resources/template_feature)
@@ -64,6 +73,46 @@
 Two example feature files are available under src/test/resources/features folder
 
 #How to use in my existing project ?
+
+- Add CucumberTest file
+
+    * Set the glue property to  "fr.redfroggy.test.bdd.glue" (+ your glue if you have one)
+    * Set the features folder property
+    * Set plugin property if you want to generate reports
+
+```
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        plugin = {"pretty", "html:target/cucumber"},
+        features = "src/test/resources/features",
+        glue = {"fr.redfroggy.test.bdd.glue"})
+public class CucumberTest {
+
+}
+````
+
+    
+- Add a "fr.redfroggy.test.bdd" package under src/test/java
+- Add a Spring Boot Application.java file under fr.redfroggy.test.bdd
+- Replace "your.package" with your package (under which spring will be able to find your @Component,@Service,
+@RestController, etc...)
+- Don't forget to add your .feature files under "src/test/resources/features" for example
+````bash
+package fr.redfroggy.test.bdd;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication(scanBasePackages = {"your.package"})
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(fr.sisnet.project.Application.class, args);
+    }
+
+}
+
+````
+
 
 #To run Java unit tests
 ````bash
