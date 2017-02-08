@@ -65,7 +65,6 @@ Two example feature files are available under src/test/resources/features folder
 
 #How to use in my existing project ?
 
-
 #To run Java unit tests
 ````bash
 $ mvn test
