@@ -72,7 +72,7 @@
 #Examples
 Two example feature files are available under src/test/resources/features folder
 
-#How to use in my existing project ?
+#How to use it in my existing project ?
 
 - Add CucumberTest file
 
