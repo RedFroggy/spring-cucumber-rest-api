@@ -20,9 +20,7 @@
 (an example file can be found under src/test/resources/template_feature)
 - The template was inspired by the [apickli project](https://github.com/apickli/apickli)
 
-
-
-    GIVEN
+  * GIVEN
     * I set (.*) header to (.*)
     * I set body to (.*)
     * I pipe contents of file (.*) to body
@@ -30,7 +28,7 @@
     * I set bearer token
     * I set query parameters to (data table with headers |parameter|value|)
     * I set headers to (data table with headers |name|value|)
-    WHEN
+  * WHEN
     * I GET $resource
     * I POST to $resource
     * I PUT $resource
@@ -38,7 +36,7 @@
     * I PATCH $resource
     * I request OPTIONS for $resource
     * I request HEAD for $resource
-    THEN
+  * THEN
     * response code should be (\d+)
     * response code should not be (\d+)
     * response header (.*) should exist
