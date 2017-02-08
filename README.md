@@ -1,4 +1,4 @@
-#REST API integration testing framework based on cucumber.js and Spring
+#REST API integration testing framework based on cucumber.js and Spring [![Build Status](https://travis-ci.org/RedFroggy/spring-cucumber-rest-api.svg?branch=master)](https://travis-ci.org/RedFroggy/spring-cucumber-rest-api)
 
 #Stack
 - Spring Boot
