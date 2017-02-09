@@ -21,6 +21,7 @@
         <groupId>fr.redfroggy.test.bdd</groupId>
         <artifactId>cucumber-gherkin</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <scope>test</scope>
     </dependency>
 ```
 
