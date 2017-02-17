@@ -4,7 +4,7 @@
 
     <groupId>fr.redfroggy.test.bdd</groupId>
     <artifactId>cucumber-gherkin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <name>Cucumber Spring rest Api</name>
     <description>Predefined steps to consume rest API</description>
