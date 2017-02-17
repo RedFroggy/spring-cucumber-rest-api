@@ -17,7 +17,10 @@
     </organization>
 
     <scm>
-        <url>https://github.com/spring-projects/spring-boot</url>
+        <url>https://github.com/RedFroggy/spring-cucumber-rest-api</url>
+        <connection>scm:git:https://github.com/RedFroggy/spring-cucumber-rest-api.git</connection>
+        <developerConnection>scm:git:https://github.com/RedFroggy/spring-cucumber-rest-api</developerConnection>
+        <tag>master</tag>
     </scm>
     <developers>
         <developer>
@@ -106,6 +109,14 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
         </plugins>
