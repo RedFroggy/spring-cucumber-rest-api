@@ -30,7 +30,7 @@
 <dependency>
     <groupId>com.github.RedFroggy</groupId>
     <artifactId>spring-cucumber-rest-api</artifactId>
-    <version>v1.0</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
