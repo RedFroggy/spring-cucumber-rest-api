@@ -15,14 +15,23 @@
 - Possibility to test response status code
 - Possibility to test the body response using a json path
 
-#Add the maven dependency
+#Add jitpack repository
 ```
-    <dependency>
-        <groupId>fr.redfroggy.test.bdd</groupId>
-        <artifactId>cucumber-gherkin</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        <scope>test</scope>
-    </dependency>
+    <repositories>
+    		<repository>
+    		    <id>jitpack.io</id>
+    		    <url>https://jitpack.io</url>
+    		</repository>
+    	</repositories>
+```
+
+#Add maven dependency
+```
+<dependency>
+    <groupId>com.github.RedFroggy</groupId>
+    <artifactId>spring-cucumber-rest-api</artifactId>
+    <version>v1.0</version>
+</dependency>
 ```
 
 #Feature template
