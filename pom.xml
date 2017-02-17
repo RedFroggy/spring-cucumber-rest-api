@@ -4,7 +4,7 @@
 
     <groupId>fr.redfroggy.test.bdd</groupId>
     <artifactId>cucumber-gherkin</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>Cucumber Spring rest Api</name>
     <description>Predefined steps to consume rest API</description>
@@ -18,7 +18,7 @@
         <url>https://github.com/RedFroggy/spring-cucumber-rest-api</url>
         <connection>scm:git:https://github.com/RedFroggy/spring-cucumber-rest-api.git</connection>
         <developerConnection>scm:git:https://github.com/RedFroggy/spring-cucumber-rest-api</developerConnection>
-        <tag>master</tag>
+        <tag>1.0.0</tag>
     </scm>
     <developers>
         <developer>
