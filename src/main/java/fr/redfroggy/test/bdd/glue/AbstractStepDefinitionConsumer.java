@@ -3,6 +3,7 @@ package fr.redfroggy.test.bdd.glue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
+import fr.redfroggy.test.bdd.customization.CustomErrorResponseHandler;
 import fr.redfroggy.test.bdd.scope.ScenarioScope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -45,6 +46,7 @@ abstract class AbstractStepDefinitionConsumer {
 
     AbstractStepDefinitionConsumer() {
         template = new RestTemplate();
+        template.setErrorHandler(new CustomErrorResponseHandler());
         objectMapper = new ObjectMapper();
         scenarioScope = new ScenarioScope();
         headers = new HttpHeaders();
