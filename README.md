@@ -1,4 +1,4 @@
-# REST API integration testing framework based on cucumber.js and Spring
+# REST API tests with and Spring and cucumber
 
 <div align="center">
   <a name="logo" href="https://www.redfroggy.fr"><img src="src/main/resources/images/logo.png" alt="RedFroggy"></a>
