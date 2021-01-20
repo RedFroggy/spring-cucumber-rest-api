@@ -1,17 +1,18 @@
-version: 2.1
-orbs:
-  codecov: codecov/codecov@1.0.2
+version: 2
 jobs:
-  build:
+  test_qa:
     docker:
-      # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/openjdk:8u181-jdk
     steps:
       - checkout
-
-      # run tests
+      - restore_cache:
+          keys:
+            - dependencies
+      - run: mvn install
       - run: mvn test
-      - run: mvn cobertura:cobertura
-
-      - codecov/upload:
-          file: target/site/cobertura
+      - run: "mvn cobertura:cobertura"
+      - run: "bash <(curl -s https://codecov.io/bash)"
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: dependencies
