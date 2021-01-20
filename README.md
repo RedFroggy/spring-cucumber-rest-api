@@ -1,13 +1,27 @@
-#REST API integration testing framework based on cucumber.js and Spring [![Build Status](https://travis-ci.org/RedFroggy/spring-cucumber-rest-api.svg?branch=master)](https://travis-ci.org/RedFroggy/spring-cucumber-rest-api)
+# REST API integration testing framework based on cucumber.js and Spring
 
-#Stack
+<div align="center">
+  <a name="logo" href="https://www.redfroggy.fr"><img src="src/main/resources/images/logo.png" alt="RedFroggy"></a>
+  <h4 align="center">A RedFroggy project</h4>
+</div>
+<br/>
+<div align="center">
+  <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/fuck-it-ship-it.svg"/></a>
+  <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/built-with-love.svg"/></a>
+<a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/made-with-java.svg"/></a>
+</div>
+<div align="center">
+  <a href="https://travis-ci.org/RedFroggy/spring-cucumber-rest-api"><img src="https://travis-ci.org/RedFroggy/spring-cucumber-rest-api.svg?branch=master"/></a>
+</div>
+
+## Stack
 - Spring Boot
 - Cucumber
 - Cucumber-Spring
 - Jayway JsonPath
 - Rest template (Spring web framework)
 
-#Description
+## Description
 - Predefined steps
 - Handle RESTFUL requests
 - Possibility to set request headers or parameters
@@ -15,29 +29,10 @@
 - Possibility to test response status code
 - Possibility to test the body response using a json path
 
-#Add jitpack repository
-```
-    <repositories>
-    		<repository>
-    		    <id>jitpack.io</id>
-    		    <url>https://jitpack.io</url>
-    		</repository>
-    	</repositories>
-```
-
-#Add maven dependency
-```
-<dependency>
-    <groupId>com.github.RedFroggy</groupId>
-    <artifactId>spring-cucumber-rest-api</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
-
-#Feature template
-- In order to successfully use this library, you need to respect the following template for your .feature files
+## Feature template
+- In order to successfully use this library, you need to respect the following template for your `.feature` files
 (an example file can be found under src/test/resources/template_feature)
-- The template was inspired by the [apickli project](https://github.com/apickli/apickli)
+- The template was inspired by the awesome [apickli project](https://github.com/apickli/apickli)
 
   * GIVEN
     * I set (.*) header to (.*)
