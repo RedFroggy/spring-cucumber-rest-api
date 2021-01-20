@@ -1,19 +1,17 @@
 version: 2.1
-
 orbs:
-  maven: circleci/maven@0.0.12
   codecov: codecov/codecov@1.0.2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
 
-workflows:
-  maven_test:
-    jobs:
-      - maven/test
-      - coverage:
-          requires:
-            - maven/test
-          steps:
-            - codecov/upload:
-                file: { { coverage_report_filepath } }
+      # run tests
+      - run: mvn test
+      - run: mvn cobertura:cobertura
 
-
-
+      - codecov/upload:
+          file: target/site/cobertura
