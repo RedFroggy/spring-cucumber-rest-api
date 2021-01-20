@@ -4,8 +4,22 @@ orbs:
   maven: circleci/maven@0.0.12
 
 workflows:
-  maven_test:
+  version: 2
+  test-qa:
     jobs:
+      - tests
+
+job_defaults: &job_defaults
+  docker:
+    - image: circleci/maven@0.0.12
+
+jobs:
+  tests:
+    <<: *job_defaults
+    steps:
       - maven/test
-      - mvn cobertura:cobertura
-      - bash <(curl -s https://codecov.io/bash)
+      - run: mvn cobertura:cobertura
+      - run: bash <(curl -s https://codecov.io/bash)
+
+
+
