@@ -1,0 +1,12 @@
+{
+  "extends": ["config:base", ":semanticCommitTypeAll(chore)"],
+  "timezone": "Europe/Paris",
+  "prHourlyLimit": 30,
+  "automerge": false,
+  "automergeType": "branch",
+  "major": {
+    "automerge": false
+  },
+  "recreateClosed": true,
+  "ignoreDeprecated": false
+}
