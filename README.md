@@ -1,4 +1,4 @@
-# REST API tests with and Spring and cucumber
+# REST API tests with Spring and Cucumber
 
 <div align="center">
   <a name="logo" href="https://www.redfroggy.fr"><img src="src/main/resources/images/logo.png" alt="RedFroggy"></a>
