@@ -8,16 +8,16 @@ workflows:
   test-qa:
     jobs:
       - maven/test
-      - tests:
+      - coverage:
           requires:
             - maven/test
 
 job_defaults: &job_defaults
   docker:
-    - image: circleci/maven@0.0.12
+    - image: circleci/openjdk:stretch
 
 jobs:
-  tests:
+  coverage:
     <<: *job_defaults
     steps:
       - run: mvn cobertura:cobertura
