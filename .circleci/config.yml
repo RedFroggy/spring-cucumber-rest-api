@@ -7,3 +7,5 @@ workflows:
   maven_test:
     jobs:
       - maven/test
+      - mvn cobertura:cobertura
+      - bash <(curl -s https://codecov.io/bash)
