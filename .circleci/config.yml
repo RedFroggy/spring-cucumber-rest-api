@@ -7,7 +7,10 @@ workflows:
   version: 2
   test-qa:
     jobs:
-      - tests
+      - maven/test
+      - tests:
+          requires:
+            - maven/test
 
 job_defaults: &job_defaults
   docker:
@@ -17,7 +20,6 @@ jobs:
   tests:
     <<: *job_defaults
     steps:
-      - maven/test
       - run: mvn cobertura:cobertura
       - run: bash <(curl -s https://codecov.io/bash)
 
