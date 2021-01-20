@@ -2,27 +2,18 @@ version: 2.1
 
 orbs:
   maven: circleci/maven@0.0.12
+  codecov: codecov/codecov@1.0.2
 
 workflows:
-  version: 2
-  test-qa:
+  maven_test:
     jobs:
       - maven/test
       - coverage:
           requires:
             - maven/test
-
-job_defaults: &job_defaults
-  docker:
-    - image: circleci/openjdk:stretch
-
-jobs:
-  coverage:
-    <<: *job_defaults
-    steps:
-      - checkout
-      - run: mvn cobertura:cobertura
-      - run: bash <(curl -s https://codecov.io/bash)
+          steps:
+            - codecov/upload:
+                file: { { coverage_report_filepath } }
 
 
 
