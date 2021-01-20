@@ -8,7 +8,7 @@ jobs:
       - restore_cache:
           keys:
             - dependencies
-      - run: mvn install
+      - run: mvn install -DskipTests=true
       - run: mvn test
       - run: "mvn cobertura:cobertura"
       - run: "bash <(curl -s https://codecov.io/bash)"
