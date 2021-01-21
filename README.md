@@ -11,7 +11,7 @@
 <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/made-with-java.svg"/></a>
 </div>
 <div align="center">
-  <a href="https://travis-ci.org/RedFroggy/spring-cucumber-rest-api"><img src="https://travis-ci.org/RedFroggy/spring-cucumber-rest-api.svg?branch=master"/></a>
+  <a href="https://circleci.com/gh/RedFroggy/spring-cucumber-rest-api"><img src="https://circleci.com/gh/RedFroggy/spring-cucumber-rest-api.svg?style=svg"/></a>
 </div>
 
 ## Stack
