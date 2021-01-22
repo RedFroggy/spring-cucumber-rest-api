@@ -4,7 +4,8 @@ Feature: Spring api controller bdd
     Given baseUri is http://localhost:8080
 
   Scenario: Add tony stark user
-    When I set Accept header to application/json
+    When I authenticate with login/password tstark/marvel
+    And I set Accept header to application/json
     And I set Content-Type header to application/json
     And I set body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"40"}
     And I POST /users
@@ -13,17 +14,19 @@ Feature: Spring api controller bdd
     And response body path $.firstName should be Tony
     And response body path $.lastName should be Stark
     And response body path $.age should be 40
+    And I store the value of body path $.id as starkUser in scenario scope
 
   Scenario: Add bruce wayne user
     When I set Accept header to application/json
     And I set Content-Type header to application/json
-    And I set body to {"id":"2","firstName":"Bruce","lastName":"Wayne","age":"50"}
+    And I set body to {"id": "2","firstName":"Bruce","lastName":"Wayne","age":"50", "relatedTo": {"id":`$starkUser`}}
     And I POST /users
     Then response code should be 201
     And response body path $.id should be 2
     And response body path $.firstName should be Bruce
     And response body path $.lastName should be Wayne
     And response body path $.age should be 50
+    And response body path $.relatedTo.id should be 1
 
   Scenario: Get users
     When I GET /users

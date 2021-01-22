@@ -1,19 +1,11 @@
-/*
- * Copyright © Hiveo - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Contact: hiveo-tech@hiveo.fr
- */
 package fr.redfroggy.bdd.glue;
 
+import fr.redfroggy.bdd.authentication.BddRestTemplateAuthentication;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.spring.CucumberContextConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpMethod;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -23,17 +15,18 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-/**
- * Step definitions for consuming a rest api {@link ContextConfiguration}
- * ContextConfiguration and {@link SpringBootTest} @SpringBootTest annotation
- * are mandatory to be able to run cucumber unit test on spring rest controllers
- */
-@CucumberContextConfiguration
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class DefaultRestApiStepDefinitionTest extends AbstractStepDefinitionConsumer {
+public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
 
-    public DefaultRestApiStepDefinitionTest(TestRestTemplate testRestTemplate) {
+    private final BddRestTemplateAuthentication templateAuthentication;
+
+    public DefaultRestApiBddStepDefinition(TestRestTemplate testRestTemplate, BddRestTemplateAuthentication templateAuthentication) {
         super(testRestTemplate);
+        this.templateAuthentication = templateAuthentication;
+    }
+
+    @Given("^I authenticate with login/password (.*)/(.*)$")
+    public void setAuthenticateUser(String login, String password) {
+        this.template = this.templateAuthentication.authenticate(login, password);
     }
 
     /**
@@ -59,20 +52,6 @@ public class DefaultRestApiStepDefinitionTest extends AbstractStepDefinitionCons
      */
     @Given("^I set body to (.*)$")
     public void setBodyTo(String body) throws IOException {
-        this.setBody(body);
-    }
-
-    /**
-     * Set the request body A json string structure is accepted The body will be
-     * parse to be sure the json is valid
-     *
-     * @param body
-     *             body to send
-     * @throws IOException
-     *                     parsing exception
-     */
-    @Given("^I set body with:$")
-    public void setBodyWith(String body) throws IOException {
         this.setBody(body);
     }
 

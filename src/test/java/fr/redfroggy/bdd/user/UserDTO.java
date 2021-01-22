@@ -10,6 +10,8 @@ public final class UserDTO {
 
     private int age;
 
+    private UserDTO relatedTo;
+
     public String getId() {
         return id;
     }
@@ -40,5 +42,13 @@ public final class UserDTO {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public UserDTO getRelatedTo() {
+        return relatedTo;
+    }
+
+    public void setRelatedTo(UserDTO relatedTo) {
+        this.relatedTo = relatedTo;
     }
 }

@@ -1,9 +1,3 @@
-/*
- * Copyright © Hiveo - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Contact: hiveo-tech@hiveo.fr
- */
 package fr.redfroggy.bdd.glue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +5,6 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.scope.ScenarioScope;
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +16,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -32,7 +27,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
  * Abstract step definition implementation Http request are made using {@link RestTemplate} RestTemplate
  */
 @SuppressWarnings("unchecked")
-abstract class AbstractStepDefinitionConsumer {
+abstract class AbstractBddStepDefinition {
 
     // Stored base uri
     protected String baseUri = "";
@@ -51,15 +46,14 @@ abstract class AbstractStepDefinitionConsumer {
 
     // Stored http response
     protected ResponseEntity<String> responseEntity;
+
     protected ObjectMapper objectMapper;
 
-    // Scenario Scope
-    protected ScenarioScope scenarioScope;
+    protected static final ScenarioScope scenarioScope = new ScenarioScope();
 
-    AbstractStepDefinitionConsumer(TestRestTemplate testRestTemplate) {
+    AbstractBddStepDefinition(TestRestTemplate testRestTemplate) {
         template = testRestTemplate;
         objectMapper = new ObjectMapper();
-        scenarioScope = new ScenarioScope();
         headers = new HttpHeaders();
         queryParams = new HashMap<>();
     }
@@ -119,6 +113,7 @@ abstract class AbstractStepDefinitionConsumer {
      */
     void setBody(String body) throws IOException {
         assertThat(body).isNotEmpty();
+        body = replaceDynamicParameters(body);
         this.body = objectMapper.readValue(body, Object.class);
     }
 
@@ -133,6 +128,8 @@ abstract class AbstractStepDefinitionConsumer {
     void request(String resource, HttpMethod method) {
         assertThat(resource).isNotEmpty();
         assertThat(method).isNotNull();
+
+        resource = replaceDynamicParameters(resource);
 
         boolean writeMode = !HttpMethod.GET.equals(method) && !HttpMethod.DELETE.equals(method)
                 && !HttpMethod.OPTIONS.equals(method) && !HttpMethod.HEAD.equals(method);
@@ -380,7 +377,7 @@ abstract class AbstractStepDefinitionConsumer {
      *            expected value
      */
     void checkScenarioVariable(String property, String value) {
-        AssertionsForClassTypes.assertThat(scenarioScope).hasFieldOrPropertyWithValue(property, value);
+        // AssertionsForClassTypes.assertThat(scenarioScope).hasFieldOrPropertyWithValue(property, value);
     }
 
     /**
@@ -413,5 +410,17 @@ abstract class AbstractStepDefinitionConsumer {
         assertThat(pathValue).isNotNull();
 
         return pathValue;
+    }
+
+    protected String replaceDynamicParameters(String value) {
+        Pattern pattern = Pattern.compile("`\\${1}(.*?)`");
+        Matcher matcher = pattern.matcher(value);
+        if (matcher.find()) {
+            Object scopeValue = scenarioScope.getJsonPaths().get(matcher.group(1));
+            if (scopeValue != null) {
+                return replaceDynamicParameters(value.replace("`$"+ matcher.group(1) +"`", scopeValue.toString()));
+            }
+        }
+        return value;
     }
 }
