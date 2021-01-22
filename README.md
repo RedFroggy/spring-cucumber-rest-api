@@ -128,7 +128,7 @@ public class CucumberTest {
 - Set the glue property to  `fr.redfroggy.test.bdd.glue"` and add your package glue.
 - Set your `features` folder property
 - Add your `.feature` files under your `features` folder
-- In your `.feature` files you should have access to all the steps defined in the [DefaultRestApiBddStepDefinition](src/main/java/fr/redfroggy/bdd/glue/DefaultRestApiBddStepDefinition.java)
+- In your `.feature` files you should have access to all the steps defined in the [DefaultRestApiBddStepDefinition](src/main/java/fr/redfroggy/bdd/glue/DefaultRestApiBddStepDefinition.java) file.
 
 
 ### Add default step definition file
