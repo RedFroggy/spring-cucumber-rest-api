@@ -95,15 +95,15 @@ Feature: Users api tests
 ```
 
 ## Share data between steps
-- You can use the following step to store data from a json response body in a shared context:
+- You can use the following step to store data from a json response body to a shared context:
 ```gherkin
 And I store the value of body path $.id as idUser in scenario scope
 ```
-- You can use the following step to store data from a response header in a shared context:
+- You can use the following step to store data from a response header to a shared context:
 ```gherkin
 And I store the value of response header Authorization as authHeader in scenario scope
 ```
-- The result of the JsonPath `$.id` will be stored in an `idUser` variable.
+- The result of the JsonPath `$.id` will be stored in the `idUser` variable.
 - To reuse this variable in another step, you can do:
 ```gherkin
 When I DELETE /users/`$idUser`
@@ -128,6 +128,7 @@ public class CucumberTest {
 - Set the glue property to  `fr.redfroggy.test.bdd.glue"` and add your package glue.
 - Set your `features` folder property
 - Add your `.feature` files under your `features` folder
+- In your `.feature` files you should have access to all the steps defined in the [DefaultRestApiBddStepDefinition](src/main/java/fr/redfroggy/bdd/glue/DefaultRestApiBddStepDefinition.java)
 
 
 ### Add default step definition file
