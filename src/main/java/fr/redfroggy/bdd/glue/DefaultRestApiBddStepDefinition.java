@@ -56,6 +56,20 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
     }
 
     /**
+     * Set the request body A json string structure is accepted The body will be
+     * parse to be sure the json is valid
+     *
+     * @param body
+     *             body to send
+     * @throws IOException
+     *                     parsing exception
+     */
+    @Given("^I set body with:$")
+    public void setBodyWith(String body) throws IOException {
+        this.setBody(body);
+    }
+
+    /**
      * Add a new http header
      *
      * @param headerName

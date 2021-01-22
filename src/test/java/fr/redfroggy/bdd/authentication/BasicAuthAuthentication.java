@@ -4,6 +4,10 @@ package fr.redfroggy.bdd.authentication;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.stereotype.Component;
 
+/**
+ * Default rest template authentication (basic auth)
+ * Used only for test purpose in this project
+ */
 @Component
 public class BasicAuthAuthentication implements BddRestTemplateAuthentication {
 

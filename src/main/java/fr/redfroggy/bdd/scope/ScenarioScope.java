@@ -5,7 +5,6 @@ import java.util.Map;
 
 /**
  * Scenario scope to store data between steps
- * Created by Michael on 08/02/2017.
  */
 public class ScenarioScope {
 
