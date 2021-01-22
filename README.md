@@ -1,4 +1,4 @@
-# REST API tests with Spring and Cucumber
+# Test your REST API with Spring, Cucumber and Gherkin !
 
 <div align="center">
   <a name="logo" href="https://www.redfroggy.fr"><img src="src/main/resources/images/logo.png" alt="RedFroggy"></a>
@@ -15,7 +15,8 @@
 </div>
 <br/>
 <br/>
-Test your Spring Rest API with [Cucumber](https://cucumber.io/) and [Gherkin](https://cucumber.io/docs/gherkin/) !
+
+Made with [Cucumber](https://cucumber.io/) and [Gherkin](https://cucumber.io/docs/gherkin/) !
 Inspired from the awesome [apickli project](https://github.com/apickli/apickli) project.
 
 ## Stack
@@ -29,7 +30,7 @@ Inspired from the awesome [apickli project](https://github.com/apickli/apickli) 
 Here a gherkin example file: [users.feature](src/test/resources/features/users.feature)
 
 ```gherkin
-Feature: Spring api controller bdd
+Feature: Users api tests
 
   Background:
     Given baseUri is http://localhost:8080
@@ -94,22 +95,27 @@ Feature: Spring api controller bdd
 ```
 
 ## Share data between steps
-You can use this step to store data in a shared context:
+- You can use the following step to store data from a json response body in a shared context:
 ```gherkin
 And I store the value of body path $.id as idUser in scenario scope
+```
+- You can use the following step to store data from a response header in a shared context:
+```gherkin
+And I store the value of response header Authorization as authHeader in scenario scope
 ```
 - The result of the JsonPath `$.id` will be stored in an `idUser` variable.
 - To reuse this variable in another step, you can do:
 ```gherkin
 When I DELETE /users/`$idUser`
+And I set Authorization header to `$authHeader`
 ```
 
 
 ## How to use it in my existing project ?
 
-### Add CucumberTest.java file
+### Add & CucumberTest  file
 
-```
+```java
 @RunWith(Cucumber.class)
 @CucumberOptions(
         plugin = {"pretty"},
@@ -119,27 +125,27 @@ public class CucumberTest {
 
 }
 ````
-_ Set the glue property to  `fr.redfroggy.test.bdd.glue"` (+ your glue if you have one)
+- Set the glue property to  `fr.redfroggy.test.bdd.glue"` and add your package glue.
 - Set your `features` folder property
 - Add your `.feature` files under your `features` folder
 
 
 ### Add default step definition file
-It is mandatory to have a class annotated with `@CucumberContextConfiguration` to be able to start unit tests.
-This class must be in the same `glue` package you specified in the `CucumberTest` class.
+It is mandatory to have a class annotated with `@CucumberContextConfiguration` to be able to run the tests.
+This class must be in the same `glue` package that you've specified in the `CucumberTest` class.
 
-```
+```java
 @CucumberContextConfiguration
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class DefaultStepDefinitionFile {
+public class DefaultStepDefinition {
 
 }
 ````
 
 ### Specify an authentication mode
-- You can authenticate using the step: `When I authenticate with login/password tstark/marvel` but the authentication mode must be implementend by you.
-- You need to create a class that implements the `BddRestTemplateAuthentication` interface 
-  and you can inject the `TestRestTemplate` in your code so you can do pretty much anything you want.
+- You can authenticate using the step: `I authenticate with login/password (.*)/(.*)` but the authentication mode must be implemented by you.
+- You need to create a class that implements the `BddRestTemplateAuthentication` interface. 
+- You can inject a `TestRestTemplate` instance in your code, so you can do pretty much anything you want.
 - For example, for a JWT authentication you can do :
 ```java
 @Component

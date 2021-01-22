@@ -69,6 +69,7 @@ abstract class AbstractBddStepDefinition {
     void setHeader(String name, String value) {
         assertThat(name).isNotNull();
         assertThat(value).isNotNull();
+        value = replaceDynamicParameters(value);
         headers.set(name, value);
     }
 
