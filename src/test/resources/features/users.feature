@@ -1,4 +1,4 @@
-Feature: Spring api controller bdd
+Feature: /users REST tests
 
   Background:
     Given baseUri is http://localhost:8080
