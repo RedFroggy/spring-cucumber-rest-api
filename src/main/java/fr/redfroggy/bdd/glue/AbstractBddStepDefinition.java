@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.scope.ScenarioScope;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -378,7 +379,7 @@ abstract class AbstractBddStepDefinition {
      *            expected value
      */
     void checkScenarioVariable(String property, String value) {
-        // AssertionsForClassTypes.assertThat(scenarioScope).hasFieldOrPropertyWithValue(property, value);
+        AssertionsForClassTypes.assertThat(scenarioScope).hasFieldOrPropertyWithValue(property, value);
     }
 
     /**
