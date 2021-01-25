@@ -1,7 +1,7 @@
-# REST API tests with Spring and Cucumber
+# Test your REST API with Spring, Cucumber and Gherkin !
 
 <div align="center">
-  <a name="logo" href="https://www.redfroggy.fr"><img src="src/main/resources/images/logo.png" alt="RedFroggy"></a>
+  <a name="logo" href="https://www.redfroggy.fr"><img src="assets/logo.png" alt="RedFroggy"></a>
   <h4 align="center">A RedFroggy project</h4>
 </div>
 <br/>
@@ -13,117 +13,120 @@
 <div align="center">
   <a href="https://circleci.com/gh/RedFroggy/spring-cucumber-rest-api"><img src="https://circleci.com/gh/RedFroggy/spring-cucumber-rest-api.svg?style=svg"/></a>
 </div>
+<br/>
+<br/>
+
+Made with [Cucumber](https://cucumber.io/) and [Gherkin](https://cucumber.io/docs/gherkin/) !
+Inspired from the awesome [apickli project](https://github.com/apickli/apickli) project.
 
 ## Stack
 - Spring Boot
 - Cucumber
-- Cucumber-Spring
 - Jayway JsonPath
-- Rest template (Spring web framework)
+- Gherkin
 
-## Description
-- Predefined steps
-- Handle RESTFUL requests
-- Possibility to set request headers or parameters
-- Possibility to test response headers
-- Possibility to test response status code
-- Possibility to test the body response using a json path
+## Demo & Example
 
-## Feature template
-- In order to successfully use this library, you need to respect the following template for your `.feature` files
-(an example file can be found under src/test/resources/template_feature)
-- The template was inspired by the awesome [apickli project](https://github.com/apickli/apickli)
+![Spring Cucumber Gherkin Demo](assets/demo.gif)
 
-  * GIVEN
-    * I set (.*) header to (.*)
-    * I set body to (.*)
-    * I pipe contents of file (.*) to body
-    * I have basic authentication credentials (.*) and (.*)
-    * I set bearer token
-    * I set query parameters to (data table with headers |parameter|value|)
-    * I set headers to (data table with headers |name|value|)
-  * WHEN
-    * I GET $resource
-    * I POST to $resource
-    * I PUT $resource
-    * I DELETE $resource
-    * I PATCH $resource
-    * I request OPTIONS for $resource
-    * I request HEAD for $resource
-  * THEN
-    * response code should be (\d+)
-    * response code should not be (\d+)
-    * response header (.*) should exist
-    * response header (.*) should not exist
-    * response header (.*) should be (.*)
-    * response header (.*) should not be (.*)
-    * response body should be valid (xml|json)
-    * response body should contain (.*)
-    * response body should not contain (.*)
-    * response body path (.*) should be (.*)
-    * response body path (.*) should not be (.*)
-    * response body path (.*) should be of type array
-    * response body path (.*) should be of type array with length (\d+)
-    * response body should be valid according to schema file (.*)
-    * response body should be valid according to swagger definition (.*) in file (.*)
-    * I store the value of body path (.*) as access token
-    * I store the value of response header (.*) as (.*) in scenario scope
-    * I store the value of body path (.*) as (.*) in scenario scope
-    * value of scenario variable (.*) should be (.*)
-    * I store the value of response header (.*) as (.*) in global scope
-    * I store the value of body path (.*) as (.*) in global scope
+You can look at the [users.feature](src/test/resources/features/users.feature) file for a more detailed example.
 
+## Share data between steps
+- You can use the following step to store data from a json response body to a shared context:
+```gherkin
+And I store the value of body path $.id as idUser in scenario scope
+```
+- You can use the following step to store data from a response header to a shared context:
+```gherkin
+And I store the value of response header Authorization as authHeader in scenario scope
+```
+- The result of the JsonPath `$.id` will be stored in the `idUser` variable.
+- To reuse this variable in another step, you can do:
+```gherkin
+When I DELETE /users/`$idUser`
+And I set Authorization header to `$authHeader`
+```
 
-## Examples
-Two example feature files are available under src/test/resources/features folder
 
 ## How to use it in my existing project ?
 
-- Add CucumberTest file
+### Add a CucumberTest  file
 
-    * Set the glue property to  "fr.redfroggy.test.bdd.glue" (+ your glue if you have one)
-    * Set the features folder property
-    * Set plugin property if you want to generate reports
-
-```
+```java
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        plugin = {"pretty", "html:target/cucumber"},
+        plugin = {"pretty"},
         features = "src/test/resources/features",
-        glue = {"fr.redfroggy.test.bdd.glue"})
+        glue = {"fr.redfroggy.bdd.glue"})
 public class CucumberTest {
 
 }
 ````
+- Set the glue property to  `fr.redfroggy.bdd.glue"` and add your package glue.
+- Set your `features` folder property
+- Add your `.feature` files under your `features` folder
+- In your `.feature` files you should have access to all the steps defined in the [DefaultRestApiBddStepDefinition](src/main/java/fr/redfroggy/bdd/glue/DefaultRestApiBddStepDefinition.java) file.
 
-    
-- Add a "fr.redfroggy.test.bdd" package under src/test/java
-- Add a Spring Boot Application.java file under fr.redfroggy.test.bdd
-- Replace "your.package" with your package (under which spring will be able to find your @Component,@Service,
-@RestController, etc...)
-- Don't forget to add your .feature files under "src/test/resources/features" for example
-````bash
-package fr.redfroggy.test.bdd;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+### Add default step definition file
+It is mandatory to have a class annotated with `@CucumberContextConfiguration` to be able to run the tests.
+This class must be in the same `glue` package that you've specified in the `CucumberTest` class.
 
-@SpringBootApplication(scanBasePackages = {"your.package"})
-public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(fr.sisnet.project.Application.class, args);
-    }
+```java
+@CucumberContextConfiguration
+@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class DefaultStepDefinition {
 
 }
-
 ````
 
+### Specify an authentication mode
+- You can authenticate using the step: `I authenticate with login/password (.*)/(.*)` but the authentication mode must be implemented by you.
+- You need to create a class that implements the `BddRestTemplateAuthentication` interface. 
+- You can inject a `TestRestTemplate` instance in your code, so you can do pretty much anything you want.
+- For example, for a JWT authentication you can do :
+```java
+@Component
+public class JwtRestTemplateAuthentication implements BddRestTemplateAuthentication {
 
-#To run Java unit tests
+    @Autowired(required = false)
+    private TestRestTemplate restTemplate;
+
+    @Override
+    public TestRestTemplate authenticate(String login, String password) {
+        String token = generateJwt();
+        restTemplate.getRestTemplate().getInterceptors().add(
+            (outReq, bytes, clientHttpReqExec) -> {
+                outReq.getHeaders().set(
+                    HttpHeaders.AUTHORIZATION, token
+                );
+                return clientHttpReqExec.execute(outReq, bytes);
+            });
+
+        return restTemplate;
+    }
+}
+```
+- For a basic authentication, you can do :
+```java
+@Component
+public class BasicAuthAuthentication implements BddRestTemplateAuthentication {
+
+    final TestRestTemplate template;
+
+    public BasicAuthAuthentication(TestRestTemplate template) {
+        this.template = template;
+    }
+
+    @Override
+    public TestRestTemplate authenticate(String login, String password) {
+        return this.template.withBasicAuth(login, password);
+    }
+}
+```
+
+## Run local unit tests
+
 ````bash
 $ mvn test
 ````
-
-It will run two features and test two kind of apis:
-- An external one: Swagger petstore api
-- An internal one: A spring rest api declared in the project using @RestController

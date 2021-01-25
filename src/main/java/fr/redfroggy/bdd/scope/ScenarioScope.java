@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Scenario scope to store data
- * Created by Michael on 08/02/2017.
+ * Scenario scope to store data between steps
  */
 public class ScenarioScope {
 
