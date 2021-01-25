@@ -21,6 +21,9 @@
 - Jayway JsonPath
 - Rest template (Spring web framework)
 
+## Installation
+- Run `npm install` to add commitlint and husky libs
+
 ## Description
 - Predefined steps
 - Handle RESTFUL requests
