@@ -8,14 +8,12 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
 before_install: |
   # only install signing keys under the same circumstances we do a mvn deploy later
-   if [[ "$TRAVIS_PULL_REQUEST" = false ]] && [[ "$TRAVIS_BRANCH" = master ]]; then
-     openssl aes-256-cbc -K $encrypted_81c98acad902_key -iv $encrypted_81c98acad902_iv -in codesigning.asc.enc -out codesigning.asc -d
-     gpg --import --batch codesigning.asc
-   fi
+  if [[ "$TRAVIS_PULL_REQUEST" = false ]] && [[ "$TRAVIS_BRANCH" = master ]]; then
+    echo $GPG_SECRET_KEYS | base64 --decode | gpg --import --no-tty --batch
+  fi
   nvm use 11
 # install dependencies used in after_success here because they don't get cached if called in after_success
 before_script:
-  - nvm use 11
   - yarn global add https://github.com/conveyal/maven-semantic-release/archive/v4.5.0.tar.gz semantic-release@15
 cache:
   directories:
@@ -26,7 +24,7 @@ cache:
     - $HOME/.cache/pip
 install: true
 jdk:
-  - openjdk8
+  - openjdk11
 language: java
 notifications:
   email: false
