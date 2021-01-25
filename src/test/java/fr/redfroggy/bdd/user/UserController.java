@@ -119,9 +119,12 @@ final class UserController {
     @RequestMapping(value = "/authenticated", method = RequestMethod.HEAD)
     public ResponseEntity<Void> authenticated(HttpServletRequest request) {
 
-        boolean isAuthenticated = StringUtils.isNotBlank(request.getHeader(HttpHeaders.AUTHORIZATION));
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        boolean isAuthenticated = StringUtils.isNotBlank(authHeader);
         if (isAuthenticated) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.AUTHORIZATION, authHeader)
+                    .build();
         }
         return ResponseEntity.status(401).build();
     }
