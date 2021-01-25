@@ -16,7 +16,7 @@
 <br/>
 <br/>
 
-Made with [Cucumber](https://cucumber.io/) and [Gherkin](https://cucumber.io/docs/gherkin/) !
+Made with Spring, [Cucumber](https://cucumber.io/) and [Gherkin](https://cucumber.io/docs/gherkin/) !
 Inspired from the awesome [apickli project](https://github.com/apickli/apickli) project.
 
 ## Stack
