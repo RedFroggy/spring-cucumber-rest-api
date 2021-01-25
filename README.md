@@ -1,7 +1,7 @@
 # Test your REST API with Spring, Cucumber and Gherkin !
 
 <div align="center">
-  <a name="logo" href="https://www.redfroggy.fr"><img src="src/main/resources/images/logo.png" alt="RedFroggy"></a>
+  <a name="logo" href="https://www.redfroggy.fr"><img src="assets/logo.png" alt="RedFroggy"></a>
   <h4 align="center">A RedFroggy project</h4>
 </div>
 <br/>
@@ -25,74 +25,11 @@ Inspired from the awesome [apickli project](https://github.com/apickli/apickli) 
 - Jayway JsonPath
 - Gherkin
 
-## Example
+## Demo & Example
 
-Here a gherkin example file: [users.feature](src/test/resources/features/users.feature)
+![Spring Cucumber Gherkin Demo](assets/demo.gif)
 
-```gherkin
-Feature: Users api tests
-
-  Background:
-    Given baseUri is http://localhost:8080
-
-  Scenario: Add tony stark user
-    When I authenticate with login/password tstark/marvel
-    And I set Accept header to application/json
-    And I set Content-Type header to application/json
-    And I set body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"40"}
-    And I POST /users
-    Then response code should be 201
-    And response body path $.id should be 1
-    And response body path $.firstName should be Tony
-    And response body path $.lastName should be Stark
-    And response body path $.age should be 40
-    And I store the value of body path $.id as starkUser in scenario scope
-
-  Scenario: Add bruce wayne user
-    When I set Accept header to application/json
-    And I set Content-Type header to application/json
-    And I set body to {"id": "2","firstName":"Bruce","lastName":"Wayne","age":"50", "relatedTo": {"id":`$starkUser`}}
-    And I POST /users
-    Then response code should be 201
-    And response body path $.id should be 2
-    And response body path $.firstName should be Bruce
-    And response body path $.lastName should be Wayne
-    And response body path $.age should be 50
-    And response body path $.relatedTo.id should be 1
-
-  Scenario: Get users
-    When I GET /users
-    Then response code should be 200
-    And response body is typed as array using path $ with length 2
-    And response body path $.[0].firstName should be Tony
-
-
-  Scenario: Get user
-    When I GET /users/1
-    Then response code should be 200
-    And response body path $.id should be 1
-    And response body path $.firstName should be Tony
-    And response body path $.lastName should be Stark
-    And response body path $.age should be 40
-
-  Scenario: Get user
-    When I GET /users/2
-    Then response code should be 200
-    And response body path $.id should be 2
-    And response body path $.firstName should be Bruce
-    And response body path $.lastName should be Wayne
-    And response body path $.age should be 50
-
-
-  Scenario: Delete wrong user
-    When I DELETE /users/3
-    Then response code should be 404
-
-  Scenario: Delete user
-    When I DELETE /users/1
-    Then response code should be 200
-
-```
+You can look at the [users.feature](src/test/resources/features/users.feature) file for a more detailed example.
 
 ## Share data between steps
 - You can use the following step to store data from a json response body to a shared context:
@@ -113,19 +50,19 @@ And I set Authorization header to `$authHeader`
 
 ## How to use it in my existing project ?
 
-### Add & CucumberTest  file
+### Add a CucumberTest  file
 
 ```java
 @RunWith(Cucumber.class)
 @CucumberOptions(
         plugin = {"pretty"},
         features = "src/test/resources/features",
-        glue = {"fr.redfroggy.test.bdd.glue"})
+        glue = {"fr.redfroggy.bdd.glue"})
 public class CucumberTest {
 
 }
 ````
-- Set the glue property to  `fr.redfroggy.test.bdd.glue"` and add your package glue.
+- Set the glue property to  `fr.redfroggy.bdd.glue"` and add your package glue.
 - Set your `features` folder property
 - Add your `.feature` files under your `features` folder
 - In your `.feature` files you should have access to all the steps defined in the [DefaultRestApiBddStepDefinition](src/main/java/fr/redfroggy/bdd/glue/DefaultRestApiBddStepDefinition.java) file.
