@@ -5,11 +5,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 final class UserController {
 
-    private final List<UserDTO> users = new ArrayList<>();
+    private List<UserDTO> users = new ArrayList<>();
 
     @GetMapping("/users")
     public List<UserDTO> getAll() {
@@ -56,6 +57,10 @@ final class UserController {
             return ResponseEntity
                     .notFound().build();
         }
+
+        users = users.stream().filter(u -> !currentUser.equals(u))
+                .collect(Collectors.toList());
+
         return ResponseEntity.
                 ok().build();
 

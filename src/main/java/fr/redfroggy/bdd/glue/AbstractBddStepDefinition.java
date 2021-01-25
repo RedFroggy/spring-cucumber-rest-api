@@ -229,7 +229,7 @@ abstract class AbstractBddStepDefinition {
         assertThat(body).isNotEmpty();
 
         // Check body json structure is valid
-        objectMapper.readValue(body, Map.class);
+        objectMapper.readValue(body, Object.class);
     }
 
     /**
@@ -258,12 +258,13 @@ abstract class AbstractBddStepDefinition {
     void checkJsonPathDoesntExist(String jsonPath) {
         ReadContext ctx = getBodyDocument();
 
-        assertThat(jsonPath).isNotEmpty();
+        if (ctx != null) {
+            assertThat(jsonPath).isNotEmpty();
 
-        assertThatThrownBy(() -> ctx.read(jsonPath))
-                .isExactlyInstanceOf(PathNotFoundException.class)
-                .as("check path " + jsonPath +" shouldnt exist");
-
+            assertThatThrownBy(() -> ctx.read(jsonPath))
+                    .isExactlyInstanceOf(PathNotFoundException.class)
+                    .as("check path " + jsonPath +" shouldnt exist");
+        }
     }
 
     /**
@@ -379,6 +380,7 @@ abstract class AbstractBddStepDefinition {
      *            expected value
      */
     void checkScenarioVariable(String property, String value) {
+        value = replaceDynamicParameters(value);
         AssertionsForClassTypes.assertThat(scenarioScope).hasFieldOrPropertyWithValue(property, value);
     }
 
@@ -388,6 +390,11 @@ abstract class AbstractBddStepDefinition {
      * @return ReadContext instance
      */
     private ReadContext getBodyDocument() {
+
+        if (responseEntity.getBody() == null) {
+            return null;
+        }
+
         // Object document = Configuration.defaultConfiguration().jsonProvider().parse();
         ReadContext ctx = JsonPath.parse(responseEntity.getBody());
         assertThat(ctx).isNotNull();
@@ -407,6 +414,11 @@ abstract class AbstractBddStepDefinition {
         assertThat(jsonPath).isNotEmpty();
 
         ReadContext ctx = getBodyDocument();
+
+        if (ctx == null) {
+            return null;
+        }
+
         Object pathValue = ctx.read(jsonPath);
 
         assertThat(pathValue).isNotNull();
