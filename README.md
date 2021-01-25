@@ -28,6 +28,9 @@ Inspired from the awesome [apickli project](https://github.com/apickli/apickli) 
 ## Installation
 - Run `npm install` to add commitlint and husky libs
 
+## Installation
+- Run `npm install` to add commitlint and husky libs
+
 ## Description
 - Predefined steps
 - Handle RESTFUL requests
