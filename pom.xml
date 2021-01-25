@@ -7,7 +7,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <name>Cucumber Spring rest Api</name>
-    <description>REST API tests with Spring and Cucumber</description>
+    <description>REST API tests with Spring, Cucumber and Gherkin</description>
     <url>https://github.com/spring-cucumber-rest-api</url>
     <organization>
         <name>RedFroggy</name>
