@@ -25,6 +25,17 @@ Inspired from the awesome [apickli project](https://github.com/apickli/apickli) 
 - Jayway JsonPath
 - Gherkin
 
+## Installation
+- Run `npm install` to add commitlint and husky libs
+
+## Description
+- Predefined steps
+- Handle RESTFUL requests
+- Possibility to set request headers or parameters
+- Possibility to test response headers
+- Possibility to test response status code
+- Possibility to test the body response using a json path
+
 ## Demo & Example
 
 ![Spring Cucumber Gherkin Demo](assets/demo.gif)
