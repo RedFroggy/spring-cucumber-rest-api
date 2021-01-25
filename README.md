@@ -33,7 +33,7 @@ Inspired from the awesome [apickli project](https://github.com/apickli/apickli) 
 
 ## Description
 - Predefined steps
-- Handle RESTFUL requests
+- Handle RESTFUL http requests
 - Possibility to set request headers or parameters
 - Possibility to test response headers
 - Possibility to test response status code
