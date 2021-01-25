@@ -1,12 +1,10 @@
 package fr.redfroggy.bdd.user;
 
-public final class UserDTO {
+public final class UserDTO extends PartialUserDTO {
 
     private String id;
 
     private String firstName;
-
-    private String lastName;
 
     private int age;
 
@@ -26,14 +24,6 @@ public final class UserDTO {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public int getAge() {

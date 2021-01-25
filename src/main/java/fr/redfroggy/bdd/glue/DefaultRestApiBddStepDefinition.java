@@ -56,20 +56,6 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
     }
 
     /**
-     * Set the request body A json string structure is accepted The body will be
-     * parse to be sure the json is valid
-     *
-     * @param body
-     *             body to send
-     * @throws IOException
-     *                     parsing exception
-     */
-    @Given("^I set body with:$")
-    public void setBodyWith(String body) throws IOException {
-        this.setBody(body);
-    }
-
-    /**
      * Add a new http header
      *
      * @param headerName
@@ -80,18 +66,6 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
     @Given("^I set (.*) header to (.*)$")
     public void header(String headerName, String headerValue) {
         this.setHeader(headerName, headerValue);
-    }
-
-    /**
-     * Add a list of query parameter to the url Gherkin table can be used to pass
-     * several headers
-     *
-     * @param parameters
-     *                   Map of parameters with name and value
-     */
-    @Given("^I set query parameters to:$")
-    public void queryParameters(Map<String, String> parameters) {
-        this.addQueryParameters(parameters);
     }
 
     @Given("^I set query parameter (.*) to (.*)")
@@ -171,18 +145,6 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
     @When("^I PATCH (.*)$")
     public void patch(String resource) {
         this.request(resource, HttpMethod.PATCH);
-    }
-
-    /**
-     * Perform an HTTP OPTIONS request. Url will be baseUri+resource The trailing
-     * slash is checked, so the value can be "/resource" or "resource"
-     *
-     * @param resource
-     *                 resource name
-     */
-    @When("^I OPTIONS (.*)$")
-    public void options(String resource) {
-        this.request(resource, HttpMethod.OPTIONS);
     }
 
     /**
@@ -330,14 +292,16 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
     public void emptyBodyPath(String jsonPath) {
         Object json = getJsonPath(jsonPath);
 
-        if (json instanceof Collection<?>) {
-            assertThat(((Collection<?>) json).isEmpty()).isTrue();
-        } else if (json instanceof String) {
-            assertThat((String) json).isEmpty();
-        } else if (json instanceof Map) {
-            assertThat((Map<?,?>) json).isEmpty();
-        } else {
-            fail("Can check empty only on string and collections and map");
+        if (json != null) {
+            if (json instanceof Collection<?>) {
+                assertThat(((Collection<?>) json).isEmpty()).isTrue();
+            }/* else if (json instanceof String) {
+                assertThat((String) json).isEmpty();
+            } else if (json instanceof Map) {
+                assertThat((Map<?,?>) json).isEmpty();
+            } else {
+                fail("Can check empty only on string and collections and map");
+            }*/
         }
     }
 
