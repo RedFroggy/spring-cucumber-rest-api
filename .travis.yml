@@ -7,7 +7,11 @@ after_success:
   # codecov will need a report on to reference in future PRs to the release branch
   - bash <(curl -s https://codecov.io/bash)
 before_install: |
-  echo $GPG_SECRET_KEYS | base64 --decode | gpg --import --no-tty --batch
+  # only install signing keys under the same circumstances we do a mvn deploy later
+   if [[ "$TRAVIS_PULL_REQUEST" = false ]] && [[ "$TRAVIS_BRANCH" = master ]]; then
+     openssl aes-256-cbc -K $encrypted_81c98acad902_key -iv $encrypted_81c98acad902_iv -in codesigning.asc.enc -out codesigning.asc -d
+     gpg --import --batch maven-artifact-signing-key.asc
+   fi
   nvm use 11
 # install dependencies used in after_success here because they don't get cached if called in after_success
 before_script:
