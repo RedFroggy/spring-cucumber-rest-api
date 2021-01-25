@@ -5,13 +5,17 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.scope.ScenarioScope;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.Assert;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -57,6 +61,9 @@ abstract class AbstractBddStepDefinition {
         objectMapper = new ObjectMapper();
         headers = new HttpHeaders();
         queryParams = new HashMap<>();
+
+        // Add support for PATCH requests
+        testRestTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     }
 
     /**
@@ -380,8 +387,9 @@ abstract class AbstractBddStepDefinition {
      *            expected value
      */
     void checkScenarioVariable(String property, String value) {
-        value = replaceDynamicParameters(value);
-        AssertionsForClassTypes.assertThat(scenarioScope).hasFieldOrPropertyWithValue(property, value);
+        if (!CollectionUtils.isEmpty(scenarioScope.getJsonPaths())) {
+            Assert.assertEquals(scenarioScope.getJsonPaths().get(property), value);
+        }
     }
 
     /**
