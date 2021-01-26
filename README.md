@@ -26,7 +26,7 @@ Inspired from the awesome [apickli project](https://github.com/apickli/apickli) 
 - Gherkin
 
 ## Installation
-- Run `npm install` to add commitlint and husky libs
+- `npm install` to add commitlint and husky libs
 
 ## Description
 - Predefined steps
