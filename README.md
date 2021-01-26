@@ -29,14 +29,6 @@ Inspired from the awesome [apickli project](https://github.com/apickli/apickli) 
 ## Installation
 - `npm install` to add commitlint and husky libs
 
-## Description
-- Predefined steps
-- Handle RESTFUL http requests
-- Possibility to set request headers or parameters
-- Possibility to test response headers
-- Possibility to test response status code
-- Possibility to test the body response using a json path
-
 ## Demo & Example
 
 ![Spring Cucumber Gherkin Demo](assets/demo.gif)
@@ -61,6 +53,8 @@ And I set Authorization header to `$authHeader`
 
 
 ## How to use it in my existing project ?
+
+You can see a usage example in the [test folder](src/test/java/fr/redfroggy/bdd).
 
 ### Add a CucumberTest  file
 
@@ -93,33 +87,56 @@ public class DefaultStepDefinition {
 ````
 
 ### Specify an authentication mode
-- You can authenticate using the step: `I authenticate with login/password (.*)/(.*)` but the authentication mode must be implemented by you.
-- You need to create a class that implements the `BddRestTemplateAuthentication` interface. 
+- You can authenticate using the step: `I authenticate with login/password (.*)/(.*)` but the authentication 
+  mode must be implemented by you.
+- You need to  implements the `BddRestTemplateAuthentication` interface.
 - You can inject a `TestRestTemplate` instance in your code, so you can do pretty much anything you want.
 - For example, for a JWT authentication you can do :
 ```java
-@Component
-public class JwtRestTemplateAuthentication implements BddRestTemplateAuthentication {
+@CucumberContextConfiguration
+@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class DefaultStepDefinition implements BddRestTemplateAuthentication {
+    
+    final TestRestTemplate template;
 
-    @Autowired(required = false)
-    private TestRestTemplate restTemplate;
+    public DefaultRestApiStepDefinitionTest(TestRestTemplate template) {
+        this.template = template;
+    }
 
     @Override
     public TestRestTemplate authenticate(String login, String password) {
         String token = generateJwt();
         restTemplate.getRestTemplate().getInterceptors().add(
-            (outReq, bytes, clientHttpReqExec) -> {
-                outReq.getHeaders().set(
-                    HttpHeaders.AUTHORIZATION, token
-                );
-                return clientHttpReqExec.execute(outReq, bytes);
-            });
+                (outReq, bytes, clientHttpReqExec) -> {
+                    outReq.getHeaders().set(
+                            HttpHeaders.AUTHORIZATION, token
+                    );
+                    return clientHttpReqExec.execute(outReq, bytes);
+                });
 
         return restTemplate;
     }
 }
 ```
 - For a basic authentication, you can do :
+```java
+@CucumberContextConfiguration
+@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class DefaultStepDefinition implements BddRestTemplateAuthentication {
+
+    final TestRestTemplate template;
+
+    public DefaultRestApiStepDefinitionTest(TestRestTemplate template) {
+        this.template = template;
+    }
+
+    @Override
+    public TestRestTemplate authenticate(String login, String password) {
+        return this.template.withBasicAuth(login, password);
+    }
+}
+```
+- If you use a specific class, it must be annotated with `@Component` to be detected by spring context scan.
 ```java
 @Component
 public class BasicAuthAuthentication implements BddRestTemplateAuthentication {
@@ -133,6 +150,37 @@ public class BasicAuthAuthentication implements BddRestTemplateAuthentication {
     @Override
     public TestRestTemplate authenticate(String login, String password) {
         return this.template.withBasicAuth(login, password);
+    }
+}
+```
+
+## Mock third party call
+If you need to mock a third party API, you can use [WireMock](http://wiremock.org/). 
+For example in your `@CucumberContextConfiguration` annotated class you can do :
+
+```java
+@CucumberContextConfiguration
+@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class DefaultStepDefinition {
+    private final WireMockRule wireMockServer = new WireMockRule(WireMockConfiguration
+            .wireMockConfig().port(8080).notifier(new ConsoleNotifier(true)));
+
+    @PostConstruct
+    public void setUp() {
+        wireMockServer.start();
+    }
+
+    @PreDestroy
+    public void stopWireMockServer() {
+        wireMockServer.stop();
+    }
+
+    @Given("^I mock api call (.*) (.*) with return code (.*) and body: (.*)$")
+    public void whenApiClient(String method, String resource, int status, String willReturnJson) {
+        WireMock.stubFor(WireMock.request(method, WireMock.urlPathMatching(resource))
+                .willReturn(WireMock.aResponse()
+                        .withStatus(status)
+                        .withBody(willReturnJson)));
     }
 }
 ```
