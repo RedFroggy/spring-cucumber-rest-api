@@ -27,7 +27,13 @@ Inspired from the awesome [apickli project](https://github.com/apickli/apickli) 
 - Gherkin
 
 ## Installation
-- `npm install` to add commitlint and husky libs
+```xml
+<dependency>
+    <groupId>fr.redfroggy.test.bdd</groupId>
+    <artifactId>cucumber-gherkin</artifactId>
+    <version>1.1.7</version>
+</dependency>
+```
 
 ## Demo & Example
 
