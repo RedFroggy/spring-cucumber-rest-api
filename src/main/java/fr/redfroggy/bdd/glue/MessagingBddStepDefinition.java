@@ -19,15 +19,15 @@ import java.util.concurrent.BlockingQueue;
  * Will push or poll data for a given queue
  * Please see {@link MessageCollector} and {@link MessageChannel}
  */
-public class SpringCloudBddStepDefinition extends AbstractBddStepDefinition{
+public class MessagingBddStepDefinition extends AbstractBddStepDefinition{
 
     private final MessageCollector collector;
     private final List<MessageChannel> channels;
 
     private BlockingQueue<Message<?>> messages;
 
-    public SpringCloudBddStepDefinition(TestRestTemplate testRestTemplate, MessageCollector collector,
-                                        List<MessageChannel> channels) {
+    public MessagingBddStepDefinition(TestRestTemplate testRestTemplate, MessageCollector collector,
+                                      List<MessageChannel> channels) {
         super(testRestTemplate);
         this.collector = collector;
         this.channels = channels;
