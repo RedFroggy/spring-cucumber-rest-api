@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
 
@@ -295,13 +294,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
         if (json != null) {
             if (json instanceof Collection<?>) {
                 assertThat(((Collection<?>) json).isEmpty()).isTrue();
-            }/* else if (json instanceof String) {
-                assertThat((String) json).isEmpty();
-            } else if (json instanceof Map) {
-                assertThat((Map<?,?>) json).isEmpty();
-            } else {
-                fail("Can check empty only on string and collections and map");
-            }*/
+            }
         }
     }
 

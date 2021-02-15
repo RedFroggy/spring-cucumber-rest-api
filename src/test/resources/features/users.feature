@@ -1,4 +1,5 @@
-Feature: Users api tests
+@user @api
+Feature: Users REST api tests
 
   Background:
     Given baseUri is http://localhost:8080

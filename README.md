@@ -1,4 +1,4 @@
-# Test your REST API with Spring, Cucumber and Gherkin !
+# Test your REST API or messaging system with Spring, Cucumber and Gherkin !
 
 <div align="center">
   <a name="logo" href="https://www.redfroggy.fr"><img src="assets/logo.png" alt="RedFroggy"></a>
@@ -22,7 +22,7 @@ Made with Spring, [Cucumber](https://cucumber.io/) and [Gherkin](https://cucumbe
 Inspired from the awesome [apickli project](https://github.com/apickli/apickli) project.
 
 ## Stack
-- Spring Boot
+- Spring Boot / Spring cloud stream
 - Cucumber
 - Jayway JsonPath
 - Gherkin
@@ -41,7 +41,8 @@ Run `npm install` to add commitlint + husky
 
 ![Spring Cucumber Gherkin Demo](assets/demo.gif)
 
-You can look at the [users.feature](src/test/resources/features/users.feature) file for a more detailed example.
+- For a REST API example, please see the [users.feature](src/test/resources/features/users.feature) file for a more detailed example.
+- For a messaging system example, please see the [users-queue.feature](src/test/resources/features/users-queue.feature) file for a more detailed example.
 
 ## Share data between steps
 - You can use the following step to store data from a json response body to a shared context:
@@ -79,7 +80,7 @@ public class CucumberTest {
 - Set the glue property to  `fr.redfroggy.bdd.glue` and add your package glue.
 - Set your `features` folder property
 - Add your `.feature` files under your `features` folder
-- In your `.feature` files you should have access to all the steps defined in the [DefaultRestApiBddStepDefinition](src/main/java/fr/redfroggy/bdd/glue/DefaultRestApiBddStepDefinition.java) file.
+- In your `.feature` files you should have access to all the steps defined in both files: [DefaultRestApiBddStepDefinition](src/main/java/fr/redfroggy/bdd/glue/DefaultRestApiBddStepDefinition.java) and [SpringCloudBddStepDefinition](src/main/java/fr/redfroggy/bdd/glue/SpringCloudBddStepDefinition.java).
 
 
 ### Add default step definition file
@@ -97,7 +98,7 @@ public class DefaultStepDefinition {
 ### Specify an authentication mode
 - You can authenticate using the step: `I authenticate with login/password (.*)/(.*)` but the authentication 
   mode must be implemented by you.
-- You need to  implements the `BddRestTemplateAuthentication` interface.
+- You need to implement the `BddRestTemplateAuthentication` interface.
 - You can inject a `TestRestTemplate` instance in your code, so you can do pretty much anything you want.
 - For example, for a JWT authentication you can do :
 ```java

@@ -1,12 +1,11 @@
 package fr.redfroggy.bdd.glue;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.scope.ScenarioScope;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.Assert;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -58,7 +57,10 @@ abstract class AbstractBddStepDefinition {
 
     AbstractBddStepDefinition(TestRestTemplate testRestTemplate) {
         template = testRestTemplate;
+
         objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
         headers = new HttpHeaders();
         queryParams = new HashMap<>();
 
@@ -399,15 +401,24 @@ abstract class AbstractBddStepDefinition {
      */
     private ReadContext getBodyDocument() {
 
+        Object payload = getPayload();
+
+        if (payload == null) {
+            return null;
+        }
+
+        ReadContext ctx = JsonPath.parse(payload);
+        assertThat(ctx).isNotNull();
+
+        return ctx;
+    }
+
+    protected Object getPayload() {
         if (responseEntity.getBody() == null) {
             return null;
         }
 
-        // Object document = Configuration.defaultConfiguration().jsonProvider().parse();
-        ReadContext ctx = JsonPath.parse(responseEntity.getBody());
-        assertThat(ctx).isNotNull();
-
-        return ctx;
+        return responseEntity.getBody();
     }
 
     /**
