@@ -34,7 +34,7 @@ public class MessagingBddStepDefinition extends AbstractBddStepDefinition{
     }
 
     @Given("^I PUSH to queue (.*) with message (.*)$")
-    public void pushSpringCloudQueue(String channelName, String body) {
+    public void pushToQueue(String channelName, String body) {
         MessageChannel channel = getChannelByName(channelName);
         Assert.assertNotNull(channel);
 
@@ -42,7 +42,7 @@ public class MessagingBddStepDefinition extends AbstractBddStepDefinition{
     }
 
     @When("^I POLL first message from queue (.*)$")
-    public void pollSpringCloudQueue(String channelName) {
+    public void pollFromQueue(String channelName) {
         MessageChannel channel = getChannelByName(channelName);
         Assert.assertNotNull(channel);
 
