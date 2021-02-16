@@ -10,6 +10,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.GenericMessage;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -25,6 +26,7 @@ public class MessagingBddStepDefinition extends AbstractBddStepDefinition{
     private final List<MessageChannel> channels;
 
     private BlockingQueue<Message<?>> messages;
+    Message<?> lastMessage;
 
     public MessagingBddStepDefinition(TestRestTemplate testRestTemplate, MessageCollector collector,
                                       List<MessageChannel> channels) {
@@ -42,13 +44,15 @@ public class MessagingBddStepDefinition extends AbstractBddStepDefinition{
     }
 
     @When("^I POLL first message from queue (.*)$")
-    public void pollFromQueue(String channelName) {
+    public void pollFromQueue(String channelName) throws InterruptedException {
         MessageChannel channel = getChannelByName(channelName);
         Assert.assertNotNull(channel);
 
         messages = collector.forChannel(channel);
         Assert.assertNotNull(messages);
         Assert.assertFalse(messages.isEmpty());
+
+        lastMessage = messages.take();
     }
 
     @Then("^queue message body path (.*) should be (.*)$")
@@ -59,8 +63,8 @@ public class MessagingBddStepDefinition extends AbstractBddStepDefinition{
     @Override
     protected Object getPayload() {
         try {
-            return objectMapper.readValue(String.valueOf(messages.take().getPayload()), LinkedHashMap.class);
-        } catch(Exception ex) {
+            return objectMapper.readValue(String.valueOf(lastMessage.getPayload()), LinkedHashMap.class);
+        } catch (IOException e) {
             return null;
         }
     }

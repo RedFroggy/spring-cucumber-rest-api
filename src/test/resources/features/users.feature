@@ -7,7 +7,7 @@ Feature: Users REST api tests
     And I set headers to:
     | Accept        | application/json  |
     | Content-Type  | application/json  |
-  
+
   Scenario: Should be authenticated
     When I HEAD /authenticated
     Then response code should be 401
