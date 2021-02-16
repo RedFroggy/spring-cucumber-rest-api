@@ -6,6 +6,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.scope.ScenarioScope;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.Assert;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -265,7 +266,7 @@ abstract class AbstractBddStepDefinition {
     }
 
     void checkJsonPathDoesntExist(String jsonPath) {
-        ReadContext ctx = getBodyDocument();
+        ReadContext ctx = readPayload();
 
         if (ctx != null) {
             assertThat(jsonPath).isNotEmpty();
@@ -399,26 +400,15 @@ abstract class AbstractBddStepDefinition {
      *
      * @return ReadContext instance
      */
-    private ReadContext getBodyDocument() {
-
-        Object payload = getPayload();
-
-        if (payload == null) {
-            return null;
-        }
-
-        ReadContext ctx = JsonPath.parse(payload);
-        assertThat(ctx).isNotNull();
-
-        return ctx;
-    }
-
-    protected Object getPayload() {
+    protected ReadContext readPayload() {
         if (responseEntity.getBody() == null) {
             return null;
         }
 
-        return responseEntity.getBody();
+        ReadContext ctx = JsonPath.parse(responseEntity.getBody());
+        AssertionsForClassTypes.assertThat(ctx).isNotNull();
+
+        return ctx;
     }
 
     /**
@@ -432,7 +422,7 @@ abstract class AbstractBddStepDefinition {
 
         assertThat(jsonPath).isNotEmpty();
 
-        ReadContext ctx = getBodyDocument();
+        ReadContext ctx = readPayload();
 
         if (ctx == null) {
             return null;

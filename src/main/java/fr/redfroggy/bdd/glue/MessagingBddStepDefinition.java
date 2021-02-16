@@ -1,8 +1,11 @@
 package fr.redfroggy.bdd.glue;
 
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ReadContext;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.Assert;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
@@ -20,7 +23,7 @@ import java.util.concurrent.BlockingQueue;
  * Will push or poll data for a given queue
  * Please see {@link MessageCollector} and {@link MessageChannel}
  */
-public class MessagingBddStepDefinition extends AbstractBddStepDefinition{
+public class MessagingBddStepDefinition extends AbstractBddStepDefinition {
 
     private final MessageCollector collector;
     private final List<MessageChannel> channels;
@@ -61,12 +64,10 @@ public class MessagingBddStepDefinition extends AbstractBddStepDefinition{
     }
 
     @Override
-    protected Object getPayload() {
-        try {
-            return objectMapper.readValue(String.valueOf(lastMessage.getPayload()), LinkedHashMap.class);
-        } catch (IOException e) {
-            return null;
-        }
+    protected ReadContext readPayload() {
+        ReadContext ctx = JsonPath.parse(String.valueOf(lastMessage.getPayload()));
+        AssertionsForClassTypes.assertThat(ctx).isNotNull();
+        return ctx;
     }
 
     private MessageChannel getChannelByName(String channelName) {
