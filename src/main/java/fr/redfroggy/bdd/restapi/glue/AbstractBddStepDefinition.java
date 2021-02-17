@@ -16,6 +16,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import wiremock.org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -75,7 +76,7 @@ abstract class AbstractBddStepDefinition {
     void setHeader(String name, String value) {
         assertThat(name).isNotNull();
         assertThat(value).isNotNull();
-        value = replaceDynamicParameters(value);
+        value = replaceDynamicParameters(value, false);
         headers.set(name, value);
     }
 
@@ -120,7 +121,7 @@ abstract class AbstractBddStepDefinition {
      */
     void setBody(String body) throws IOException {
         assertThat(body).isNotEmpty();
-        body = replaceDynamicParameters(body);
+        body = replaceDynamicParameters(body, true);
         this.body = objectMapper.readValue(body, Object.class);
     }
 
@@ -136,7 +137,7 @@ abstract class AbstractBddStepDefinition {
         assertThat(resource).isNotEmpty();
         assertThat(method).isNotNull();
 
-        resource = replaceDynamicParameters(resource);
+        resource = replaceDynamicParameters(resource, true);
 
         boolean writeMode = !HttpMethod.GET.equals(method) && !HttpMethod.DELETE.equals(method)
                 && !HttpMethod.OPTIONS.equals(method) && !HttpMethod.HEAD.equals(method);
@@ -311,15 +312,11 @@ abstract class AbstractBddStepDefinition {
      */
     private void checkJsonValue(Collection pathValue, String jsonValue, boolean isNot) {
         assertThat(pathValue).isNotEmpty();
-        Object jsonValueToEvaluate = jsonValue;
-        if (pathValue.iterator().next() instanceof Boolean) {
-            jsonValueToEvaluate = Boolean.valueOf(jsonValue);
-        }
 
         if (!isNot) {
-            assertThat(pathValue).contains(jsonValueToEvaluate);
+            assertThat(pathValue).isEqualTo(JsonPath.parse(jsonValue).json());
         } else {
-            assertThat(pathValue).doesNotContain(jsonValueToEvaluate);
+            assertThat(pathValue).isNotEqualTo(JsonPath.parse(jsonValue).json());
         }
     }
 
@@ -385,9 +382,17 @@ abstract class AbstractBddStepDefinition {
      *            expected value
      */
     void checkScenarioVariable(String property, String value) {
+        Object scopeValue = null;
         if (!CollectionUtils.isEmpty(scenarioScope.getJsonPaths())) {
-            Assert.assertEquals(scenarioScope.getJsonPaths().get(property), value);
+            scopeValue = scenarioScope.getJsonPaths().get(property);
         }
+
+        if (scopeValue == null && !CollectionUtils.isEmpty(scenarioScope.getHeaders())) {
+            scopeValue = scenarioScope.getHeaders().get(property);
+        }
+
+        Assert.assertNotNull(scopeValue);
+        Assert.assertEquals(scopeValue, value);
     }
 
     /**
@@ -432,13 +437,15 @@ abstract class AbstractBddStepDefinition {
         return pathValue;
     }
 
-    protected String replaceDynamicParameters(String value) {
+    protected String replaceDynamicParameters(String value, boolean jsonPath) {
         Pattern pattern = Pattern.compile("`\\${1}(.*?)`");
         Matcher matcher = pattern.matcher(value);
         if (matcher.find()) {
-            Object scopeValue = scenarioScope.getJsonPaths().get(matcher.group(1));
+            Object scopeValue = jsonPath ? scenarioScope.getJsonPaths().get(matcher.group(1))
+                    : scenarioScope.getHeaders().get(matcher.group(1));
             if (scopeValue != null) {
-                return replaceDynamicParameters(value.replace("`$"+ matcher.group(1) +"`", scopeValue.toString()));
+                return replaceDynamicParameters(value.replace("`$"+ matcher.group(1) +"`",
+                        scopeValue.toString()), jsonPath);
             }
         }
         return value;
