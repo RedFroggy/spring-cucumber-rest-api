@@ -1,4 +1,4 @@
-package fr.redfroggy.bdd.restapi.cucumber;
+package fr.redfroggy.bdd.restapi;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
