@@ -1,4 +1,4 @@
-package fr.redfroggy.bdd.cucumber;
+package fr.redfroggy.bdd.restapi;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
@@ -13,5 +13,5 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         plugin = {"pretty"},
         features = "src/test/resources/features",
-        glue = {"fr.redfroggy.bdd.glue"})
-public  final class CucumberTest {}
+        glue = {"fr.redfroggy.bdd.restapi.glue"})
+public  final class RestApiCucumberTest {}

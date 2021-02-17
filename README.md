@@ -31,7 +31,7 @@ Inspired from the awesome [apickli project](https://github.com/apickli/apickli) 
 ```xml
 <dependency>
     <groupId>fr.redfroggy.test.bdd</groupId>
-    <artifactId>cucumber-gherkin</artifactId>
+    <artifactId>cucumber-restapi</artifactId>
     <version>1.1.7</version>
 </dependency>
 ```
@@ -62,7 +62,7 @@ And I set Authorization header to `$authHeader`
 
 ## How to use it in my existing project ?
 
-You can see a usage example in the [test folder](src/test/java/fr/redfroggy/bdd).
+You can see a usage example in the [test folder](src/test/java/fr/redfroggy/bdd/restapi).
 
 ### Add a CucumberTest  file
 
@@ -71,7 +71,7 @@ You can see a usage example in the [test folder](src/test/java/fr/redfroggy/bdd)
 @CucumberOptions(
         plugin = {"pretty"},
         features = "src/test/resources/features",
-        glue = {"fr.redfroggy.bdd.glue"})
+        glue = {"fr.redfroggy.bdd.restapi.glue"})
 public class CucumberTest {
 
 }
@@ -79,7 +79,7 @@ public class CucumberTest {
 - Set the glue property to  `fr.redfroggy.bdd.glue` and add your package glue.
 - Set your `features` folder property
 - Add your `.feature` files under your `features` folder
-- In your `.feature` files you should have access to all the steps defined in the [DefaultRestApiBddStepDefinition](src/main/java/fr/redfroggy/bdd/glue/DefaultRestApiBddStepDefinition.java) file.
+- In your `.feature` files you should have access to all the steps defined in the [DefaultRestApiBddStepDefinition](src/main/java/fr/redfroggy/bdd/restapi/glue/DefaultRestApiBddStepDefinition.java) file.
 
 
 ### Add default step definition file

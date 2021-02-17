@@ -1,12 +1,10 @@
-package fr.redfroggy.bdd.glue;
+package fr.redfroggy.bdd.restapi.glue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
-import fr.redfroggy.bdd.scope.ScenarioScope;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.AssertionsForClassTypes;
+import fr.redfroggy.bdd.restapi.scope.ScenarioScope;
 import org.junit.Assert;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
