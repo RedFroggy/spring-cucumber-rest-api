@@ -1,4 +1,4 @@
-package fr.redfroggy.bdd.authentication;
+package fr.redfroggy.bdd.restapi.authentication;
 
 import org.springframework.boot.test.web.client.TestRestTemplate;
 

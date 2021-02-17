@@ -1,6 +1,6 @@
-package fr.redfroggy.bdd.glue;
+package fr.redfroggy.bdd.restapi.glue;
 
-import fr.redfroggy.bdd.authentication.BddRestTemplateAuthentication;
+import fr.redfroggy.bdd.restapi.authentication.BddRestTemplateAuthentication;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -353,7 +353,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param headerAlias
      *                    http header alias (which will be stored in the scenario
      *                    scope)
-     * @see fr.redfroggy.bdd.scope.ScenarioScope
+     * @see fr.redfroggy.bdd.restapi.scope.ScenarioScope
      */
     @Then("^I store the value of response header (.*) as (.*) in scenario scope$")
     public void storeResponseHeader(String headerName, String headerAlias) {
@@ -370,7 +370,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param jsonPathAlias
      *                      json path alias (which will be stored in the scenario
      *                      scope)
-     * @see fr.redfroggy.bdd.scope.ScenarioScope
+     * @see fr.redfroggy.bdd.restapi.scope.ScenarioScope
      */
     @Then("^I store the value of body path (.*) as (.*) in scenario scope$")
     public void storeResponseJsonPath(String jsonPath, String jsonPathAlias) {
@@ -384,7 +384,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      *                 scenario scope property
      * @param value
      *                 expected property value
-     * @see fr.redfroggy.bdd.scope.ScenarioScope
+     * @see fr.redfroggy.bdd.restapi.scope.ScenarioScope
      */
     @Then("^value of scenario variable (.*) should be (.*)$")
     public void scenarioVariableIsValid(String property, String value) {

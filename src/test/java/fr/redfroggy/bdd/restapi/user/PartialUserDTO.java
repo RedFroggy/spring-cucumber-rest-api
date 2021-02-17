@@ -1,4 +1,4 @@
-package fr.redfroggy.bdd.user;
+package fr.redfroggy.bdd.restapi.user;
 
 public class PartialUserDTO {
 

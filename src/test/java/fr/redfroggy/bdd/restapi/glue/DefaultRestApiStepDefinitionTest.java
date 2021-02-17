@@ -1,10 +1,9 @@
-package fr.redfroggy.bdd.glue;
+package fr.redfroggy.bdd.restapi.glue;
 
-import fr.redfroggy.bdd.authentication.BddRestTemplateAuthentication;
+import fr.redfroggy.bdd.restapi.authentication.BddRestTemplateAuthentication;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.test.context.ContextConfiguration;
 
 /**
  * This file is mandatory for cucumber tests because it needs a Cucumber context to be able to work.
