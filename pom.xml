@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.redfroggy.test.bdd</groupId>
-    <artifactId>cucumber-gherkin</artifactId>
+    <artifactId>cucumber-restapi</artifactId>
     <version>1.1.8-SNAPSHOT</version>
 
     <name>Cucumber Spring rest Api</name>
