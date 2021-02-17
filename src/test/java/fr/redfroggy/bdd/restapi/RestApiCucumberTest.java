@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 /**
  * Gherkin tests entry points
  * - features: Path where the .feature files are located
- * - glue: List of packages where step implementation are written
+ * - glue: List of packages where step implementation are written to
  */
 @RunWith(Cucumber.class)
 @CucumberOptions(

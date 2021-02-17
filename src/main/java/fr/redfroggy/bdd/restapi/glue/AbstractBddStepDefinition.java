@@ -16,6 +16,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import wiremock.org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -386,7 +387,7 @@ abstract class AbstractBddStepDefinition {
             scopeValue = scenarioScope.getJsonPaths().get(property);
         }
 
-        if (!CollectionUtils.isEmpty(scenarioScope.getHeaders())) {
+        if (scopeValue == null && !CollectionUtils.isEmpty(scenarioScope.getHeaders())) {
             scopeValue = scenarioScope.getHeaders().get(property);
         }
 
