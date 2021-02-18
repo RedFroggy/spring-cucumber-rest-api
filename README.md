@@ -30,9 +30,9 @@ Inspired from the awesome [apickli project](https://github.com/apickli/apickli) 
 ## Installation
 ```xml
 <dependency>
-    <groupId>fr.redfroggy.test.bdd</groupId>
-    <artifactId>cucumber-restapi</artifactId>
-    <version>1.1.7</version>
+  <groupId>fr.redfroggy.test.bdd</groupId>
+  <artifactId>cucumber-restapi</artifactId>
+  <version>1.3.1</version>
 </dependency>
 ```
 Run `npm install` to add commitlint + husky
