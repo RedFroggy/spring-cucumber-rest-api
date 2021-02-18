@@ -5,7 +5,6 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.restapi.scope.ScenarioScope;
-import org.junit.Assert;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -99,16 +98,8 @@ abstract class AbstractBddStepDefinition {
      */
     void addHeaders(Map<String, String> newHeaders) {
         assertThat(newHeaders).isNotEmpty();
-        newHeaders.forEach((key, value) -> {
-
-            List<String> headerValues = this.headers.get(key);
-            if (headerValues == null) {
-                headerValues = Collections.singletonList(value);
-            } else {
-                headerValues.add(value);
-            }
-            this.headers.put(key, headerValues);
-        });
+        newHeaders.forEach((key, value) ->
+                this.headers.put(key,  Collections.singletonList(value)));
     }
 
     /**
@@ -121,8 +112,8 @@ abstract class AbstractBddStepDefinition {
      */
     void setBody(String body) throws IOException {
         assertThat(body).isNotEmpty();
-        body = replaceDynamicParameters(body, true);
-        this.body = objectMapper.readValue(body, Object.class);
+        String sanitizedBody = replaceDynamicParameters(body, true);
+        this.body = objectMapper.readValue(sanitizedBody, Object.class);
     }
 
     /**
@@ -139,12 +130,8 @@ abstract class AbstractBddStepDefinition {
 
         resource = replaceDynamicParameters(resource, true);
 
-        boolean writeMode = !HttpMethod.GET.equals(method) && !HttpMethod.DELETE.equals(method)
-                && !HttpMethod.OPTIONS.equals(method) && !HttpMethod.HEAD.equals(method);
-
-        if (!resource.contains("/")) {
-            resource = "/" + resource;
-        }
+        boolean writeMode = HttpMethod.PUT.equals(method) || HttpMethod.POST.equals(method)
+                || HttpMethod.PATCH.equals(method);
 
         HttpEntity<Object> httpEntity;
 
@@ -172,6 +159,7 @@ abstract class AbstractBddStepDefinition {
      */
     void checkStatus(int status, boolean isNot) {
         assertThat(status).isGreaterThan(0);
+
         if (isNot) {
             assertThat(responseEntity.getStatusCodeValue()).isNotEqualTo(status);
         } else {
@@ -191,6 +179,7 @@ abstract class AbstractBddStepDefinition {
     List<String> checkHeaderExists(String headerName, boolean isNot) {
         assertThat(headerName).isNotEmpty();
         assertThat(responseEntity.getHeaders()).isNotNull();
+
         if (!isNot) {
             assertThat(responseEntity.getHeaders().get(headerName)).isNotNull();
             return responseEntity.getHeaders().get(headerName);
@@ -212,9 +201,7 @@ abstract class AbstractBddStepDefinition {
      */
     void checkHeaderEqual(String headerName, String headerValue, boolean isNot) {
         assertThat(headerName).isNotEmpty();
-
         assertThat(headerValue).isNotEmpty();
-
         assertThat(responseEntity.getHeaders()).isNotNull();
 
         if (!isNot) {
@@ -263,13 +250,10 @@ abstract class AbstractBddStepDefinition {
 
     void checkJsonPathDoesntExist(String jsonPath) {
         ReadContext ctx = getBodyDocument();
-
         if (ctx != null) {
             assertThat(jsonPath).isNotEmpty();
-
             assertThatThrownBy(() -> ctx.read(jsonPath))
-                    .isExactlyInstanceOf(PathNotFoundException.class)
-                    .as("check path " + jsonPath +" shouldnt exist");
+                    .isExactlyInstanceOf(PathNotFoundException.class);
         }
     }
 
@@ -345,9 +329,7 @@ abstract class AbstractBddStepDefinition {
      *            new header name in the scenario scope
      */
     void storeHeader(String headerName, String headerAlias) {
-
         assertThat(headerName).isNotEmpty();
-
         assertThat(headerAlias).isNotEmpty();
 
         List<String> headerValues = checkHeaderExists(headerName, false);
@@ -366,7 +348,6 @@ abstract class AbstractBddStepDefinition {
      */
     void storeJsonPath(String jsonPath, String jsonPathAlias) {
         assertThat(jsonPath).isNotEmpty();
-
         assertThat(jsonPathAlias).isNotEmpty();
 
         Object pathValue = getJsonPath(jsonPath);
@@ -382,17 +363,19 @@ abstract class AbstractBddStepDefinition {
      *            expected value
      */
     void checkScenarioVariable(String property, String value) {
-        Object scopeValue = null;
-        if (!CollectionUtils.isEmpty(scenarioScope.getJsonPaths())) {
-            scopeValue = scenarioScope.getJsonPaths().get(property);
-        }
+        Object scopeValue;
+        scopeValue = scenarioScope.getJsonPaths().get(property);
 
-        if (scopeValue == null && !CollectionUtils.isEmpty(scenarioScope.getHeaders())) {
+        if (scopeValue == null) {
             scopeValue = scenarioScope.getHeaders().get(property);
         }
+        assertThat(scopeValue).isNotNull();
 
-        Assert.assertNotNull(scopeValue);
-        Assert.assertEquals(scopeValue, value);
+        if (scopeValue instanceof Collection) {
+            assertThat(((Collection) scopeValue)).contains(value);
+        } else {
+            assertThat(scopeValue).isEqualTo(value);
+        }
     }
 
     /**
@@ -406,7 +389,6 @@ abstract class AbstractBddStepDefinition {
             return null;
         }
 
-        // Object document = Configuration.defaultConfiguration().jsonProvider().parse();
         ReadContext ctx = JsonPath.parse(responseEntity.getBody());
         assertThat(ctx).isNotNull();
 
@@ -443,10 +425,10 @@ abstract class AbstractBddStepDefinition {
         if (matcher.find()) {
             Object scopeValue = jsonPath ? scenarioScope.getJsonPaths().get(matcher.group(1))
                     : scenarioScope.getHeaders().get(matcher.group(1));
-            if (scopeValue != null) {
-                return replaceDynamicParameters(value.replace("`$"+ matcher.group(1) +"`",
-                        scopeValue.toString()), jsonPath);
-            }
+            assertThat(scopeValue).isNotNull();
+
+            return replaceDynamicParameters(value.replace("`$"+ matcher.group(1) +"`",
+                    scopeValue.toString()), jsonPath);
         }
         return value;
     }

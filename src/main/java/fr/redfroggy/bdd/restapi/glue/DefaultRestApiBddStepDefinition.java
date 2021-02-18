@@ -293,9 +293,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
         Object json = getJsonPath(jsonPath);
 
         if (json != null) {
-            if (json instanceof Collection<?>) {
-                assertThat(((Collection<?>) json).isEmpty()).isTrue();
-            }
+            assertThat(((Collection<?>) json).isEmpty()).isTrue();
         }
     }
 
