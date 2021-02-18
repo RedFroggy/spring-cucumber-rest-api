@@ -300,12 +300,12 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>90%</minimum>
+                                            <minimum>100%</minimum>
                                         </limit>
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>70%</minimum>
+                                            <minimum>100%</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

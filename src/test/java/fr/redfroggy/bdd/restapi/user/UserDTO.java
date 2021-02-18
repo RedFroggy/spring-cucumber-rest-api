@@ -1,5 +1,7 @@
 package fr.redfroggy.bdd.restapi.user;
 
+import java.util.List;
+
 public final class UserDTO extends PartialUserDTO {
 
     private String id;
@@ -9,6 +11,8 @@ public final class UserDTO extends PartialUserDTO {
     private int age;
 
     private UserDTO relatedTo;
+
+    private List<String> sessionIds;
 
     public String getId() {
         return id;
@@ -40,5 +44,13 @@ public final class UserDTO extends PartialUserDTO {
 
     public void setRelatedTo(UserDTO relatedTo) {
         this.relatedTo = relatedTo;
+    }
+
+    public List<String> getSessionIds() {
+        return sessionIds;
+    }
+
+    public void setSessionIds(List<String> sessionIds) {
+        this.sessionIds = sessionIds;
     }
 }

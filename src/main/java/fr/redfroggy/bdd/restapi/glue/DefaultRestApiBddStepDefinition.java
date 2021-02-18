@@ -35,7 +35,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param uri
      *            base uri
      */
-    @Given("^baseUri is (.*)$")
+    @Given("^http baseUri is (.*)$")
     public void baseUri(String uri) {
         assertThat(uri).isNotEmpty();
         baseUri = uri;
@@ -50,7 +50,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @throws IOException
      *                     parsing exception
      */
-    @Given("^I set body to (.*)$")
+    @Given("^I set http body to (.*)$")
     public void setBodyTo(String body) throws IOException {
         this.setBody(body);
     }
@@ -63,12 +63,12 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param headerValue
      *                    header value
      */
-    @Given("^I set (.*) header to (.*)$")
+    @Given("^I set (.*) http header to (.*)$")
     public void header(String headerName, String headerValue) {
         this.setHeader(headerName, headerValue);
     }
 
-    @Given("^I set query parameter (.*) to (.*)")
+    @Given("^I set http query parameter (.*) to (.*)")
     public void queryParameter(String param , String value) {
         this.addQueryParameters(Collections.singletonMap(param, value));
     }
@@ -78,7 +78,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param parameters
      *                   Map of headers to send with name and value
      */
-    @Given("^I set headers to:$")
+    @Given("^I set http headers to:$")
     public void headers(Map<String, String> parameters) {
         this.addHeaders(parameters);
     }
@@ -165,7 +165,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param status
      *               status code to test
      */
-    @Then("^response code should be (\\d+)$")
+    @Then("^http response code should be (\\d+)$")
     public void responseCode(Integer status) {
         this.checkStatus(status, false);
     }
@@ -176,7 +176,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param status
      *               status code to test
      */
-    @Then("^response code should not be (\\d+)$")
+    @Then("^http response code should not be (\\d+)$")
     public void notResponseCode(Integer status) {
         this.checkStatus(status, true);
     }
@@ -187,7 +187,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param headerName
      *                   name of the header to find
      */
-    @Then("^response header (.*) should exist$")
+    @Then("^http response header (.*) should exist$")
     public void headerExists(String headerName) {
         this.checkHeaderExists(headerName, false);
     }
@@ -198,7 +198,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param headerName
      *                   name of the header to not find
      */
-    @Then("^response header (.*) should not exist$")
+    @Then("^http response header (.*) should not exist$")
     public void headerNotExists(String headerName) {
         this.checkHeaderExists(headerName, true);
     }
@@ -211,7 +211,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param headerValue
      *                    expected value of the header
      */
-    @Then("^response header (.*) should be (.*)$")
+    @Then("^http response header (.*) should be (.*)$")
     public void headerEqual(String headerName, String headerValue) {
         this.checkHeaderEqual(headerName, headerValue, false);
     }
@@ -224,7 +224,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param headerValue
      *                    unexpected value of the header
      */
-    @Then("^response header (.*) should not be (.*)$")
+    @Then("^http response header (.*) should not be (.*)$")
     public void headerNotEqual(String headerName, String headerValue) {
         this.checkHeaderEqual(headerName, headerValue, true);
     }
@@ -236,7 +236,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @throws IOException
      *                     if the body is not json format
      */
-    @Then("^response body should be valid json$")
+    @Then("^http response body should be valid json$")
     public void bodyIsValid() throws IOException {
         this.checkJsonBody();
     }
@@ -247,7 +247,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param bodyValue
      *                  value which the body must contain
      */
-    @Then("^response body should contain (.*)$")
+    @Then("^http response body should contain (.*)$")
     public void bodyContains(String bodyValue) {
         this.checkBodyContains(bodyValue);
     }
@@ -258,7 +258,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param jsonPath
      *                 json path query
      */
-    @Then("^response body path (.*) should exists$")
+    @Then("^http response body path (.*) should exists$")
     public void bodyPathExists(String jsonPath) {
         this.checkJsonPathExists(jsonPath);
     }
@@ -269,7 +269,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param jsonPath
      *                 json path query
      */
-    @Then("^response body path (.*) should not exist$")
+    @Then("^http response body path (.*) should not exist$")
     public void bodyPathDoesntExist(String jsonPath) {
         this.checkJsonPathDoesntExist(jsonPath);
     }
@@ -283,25 +283,17 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param value
      *                 expected value
      */
-    @Then("^response body path (.*) should be (.*)$")
+    @Then("^http response body path (.*) should be (.*)$")
     public void bodyPathEqual(String jsonPath, String value) {
         this.checkJsonPath(jsonPath, value, false);
     }
 
-    @Then("^response body path (.*) should not have content$")
+    @Then("^http response body path (.*) should not have content$")
     public void emptyBodyPath(String jsonPath) {
         Object json = getJsonPath(jsonPath);
 
         if (json != null) {
-            if (json instanceof Collection<?>) {
-                assertThat(((Collection<?>) json).isEmpty()).isTrue();
-            }/* else if (json instanceof String) {
-                assertThat((String) json).isEmpty();
-            } else if (json instanceof Map) {
-                assertThat((Map<?,?>) json).isEmpty();
-            } else {
-                fail("Can check empty only on string and collections and map");
-            }*/
+            assertThat(((Collection<?>) json).isEmpty()).isTrue();
         }
     }
 
@@ -313,7 +305,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param value
      *                 unexpected value
      */
-    @Then("^response body path (.*) should not be (.*)$")
+    @Then("^http response body path (.*) should not be (.*)$")
     public void bodyPathNotEqual(String jsonPath, String value) {
         this.checkJsonPath(jsonPath, value, true);
     }
@@ -324,7 +316,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param jsonPath
      *                 json path query
      */
-    @Then("^response body is typed as array for path (.*)$")
+    @Then("^http response body is typed as array for path (.*)$")
     public void bodyPathIsArray(String jsonPath) {
         this.checkJsonPathIsArray(jsonPath, -1);
     }
@@ -338,7 +330,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      * @param length
      *                 expected length
      */
-    @Then("^response body is typed as array using path (.*) with length (\\d+)$")
+    @Then("^http response body is typed as array using path (.*) with length (\\d+)$")
     public void bodyPathIsArrayWithLength(String jsonPath, int length) {
         this.checkJsonPathIsArray(jsonPath, length);
     }
@@ -355,7 +347,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      *                    scope)
      * @see fr.redfroggy.bdd.restapi.scope.ScenarioScope
      */
-    @Then("^I store the value of response header (.*) as (.*) in scenario scope$")
+    @Then("^I store the value of http response header (.*) as (.*) in scenario scope$")
     public void storeResponseHeader(String headerName, String headerAlias) {
         this.storeHeader(headerName, headerAlias);
     }
@@ -372,7 +364,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      *                      scope)
      * @see fr.redfroggy.bdd.restapi.scope.ScenarioScope
      */
-    @Then("^I store the value of body path (.*) as (.*) in scenario scope$")
+    @Then("^I store the value of http body path (.*) as (.*) in scenario scope$")
     public void storeResponseJsonPath(String jsonPath, String jsonPathAlias) {
         this.storeJsonPath(jsonPath, jsonPathAlias);
     }
@@ -386,7 +378,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      *                 expected property value
      * @see fr.redfroggy.bdd.restapi.scope.ScenarioScope
      */
-    @Then("^value of scenario variable (.*) should be (.*)$")
+    @Then("^http value of scenario variable (.*) should be (.*)$")
     public void scenarioVariableIsValid(String property, String value) {
         this.checkScenarioVariable(property, value);
     }
