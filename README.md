@@ -8,33 +8,35 @@
 <div align="center">
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/fuck-it-ship-it.svg"/></a>
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/built-with-love.svg"/></a>
-<a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/made-with-java.svg"/></a>
+  <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/made-with-java.svg"/></a>
 </div>
 <div align="center">
-  <a href="https://travis-ci.com/RedFroggy/spring-cucumber-rest-api"><img src="https://travis-ci.com/RedFroggy/spring-cucumber-rest-api.svg?branch=master"/></a>
+   <a href="https://maven-badges.herokuapp.com/maven-central/fr.redfroggy.test.bdd/cucumber-restapi"><img src="https://maven-badges.herokuapp.com/maven-central/fr.redfroggy.test.bdd/cucumber-restapi/badge.svg?style=plastic" /></a>
+   <a href="https://travis-ci.com/RedFroggy/spring-cucumber-rest-api"><img src="https://travis-ci.com/RedFroggy/spring-cucumber-rest-api.svg?branch=master"/></a>
    <a href="https://codecov.io/gh/RedFroggy/spring-cucumber-rest-api"><img src="https://codecov.io/gh/RedFroggy/spring-cucumber-rest-api/branch/master/graph/badge.svg?token=XM9R6ZV9SJ"/></a>
-  <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg"/></a>
+   <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg"/></a>
+   <a href="https://opensource.org/licenses/mit-license.php"><img src="https://badges.frapsoft.com/os/mit/mit.svg?v=103"/></a>
 </div>
 <br/>
 <br/>
 
-Made with Spring, [Cucumber](https://cucumber.io/) and [Gherkin](https://cucumber.io/docs/gherkin/) !
+Made with , [Cucumber](https://cucumber.io/) and [Gherkin](https://cucumber.io/docs/gherkin/) !
 Inspired from the awesome [apickli project](https://github.com/apickli/apickli) project.
 
 ## Stack
 - Spring Boot
-- Cucumber
+- Cucumber / Gherkin
 - Jayway JsonPath
-- Gherkin
 
 ## Installation
 ```xml
 <dependency>
   <groupId>fr.redfroggy.test.bdd</groupId>
   <artifactId>cucumber-restapi</artifactId>
-  <version>1.3.1</version>
 </dependency>
 ```
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/fr.redfroggy.test.bdd/cucumber-restapi/badge.svg)](https://maven-badges.herokuapp.com/maven-central/fr.redfroggy.test.bdd/cucumber-restapi)
+
 Run `npm install` to add commitlint + husky
 
 ## Demo & Example
@@ -97,7 +99,7 @@ public class DefaultStepDefinition {
 ### Specify an authentication mode
 - You can authenticate using the step: `I authenticate with login/password (.*)/(.*)` but the authentication 
   mode must be implemented by you.
-- You need to  implements the `BddRestTemplateAuthentication` interface.
+- You need to implement the `BddRestTemplateAuthentication` interface.
 - You can inject a `TestRestTemplate` instance in your code, so you can do pretty much anything you want.
 - For example, for a JWT authentication you can do :
 ```java
@@ -170,8 +172,10 @@ For example in your `@CucumberContextConfiguration` annotated class you can do :
 @CucumberContextConfiguration
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class DefaultStepDefinition {
-    private final WireMockRule wireMockServer = new WireMockRule(WireMockConfiguration
-            .wireMockConfig().port(8080).notifier(new ConsoleNotifier(true)));
+    
+    @ClassRule
+    private static final WireMockClassRule wireMockServer = new WireMockClassRule(WireMockConfiguration
+            .wireMockConfig().port(8888).notifier(new ConsoleNotifier(true)));
 
     @PostConstruct
     public void setUp() {
@@ -185,7 +189,7 @@ public class DefaultStepDefinition {
 
     @Given("^I mock api call (.*) (.*) with return code (.*) and body: (.*)$")
     public void whenApiClient(String method, String resource, int status, String willReturnJson) {
-        WireMock.stubFor(WireMock.request(method, WireMock.urlPathMatching(resource))
+      wireMockServer.stubFor(WireMock.request(method, WireMock.urlPathMatching(resource))
                 .willReturn(WireMock.aResponse()
                         .withStatus(status)
                         .withBody(willReturnJson)));
