@@ -8,6 +8,7 @@
 <div align="center">
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/fuck-it-ship-it.svg"/></a>
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/built-with-love.svg"/></a>
+  <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/made-with-java.svg"/></a>
 </div>
 <div align="center">
    <a href="https://maven-badges.herokuapp.com/maven-central/fr.redfroggy.test.bdd/cucumber-restapi"><img src="https://maven-badges.herokuapp.com/maven-central/fr.redfroggy.test.bdd/cucumber-restapi/badge.svg?style=plastic" /></a>
