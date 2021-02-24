@@ -267,6 +267,9 @@
                     </dependency>
                 </dependencies>
                 <configuration>
+                    <includes>
+                        <include>fr/redfroggy/bdd/restapi/**/*Test.java</include>
+                    </includes>
                     <!-- Force alphabetical order to have a reproducible build -->
                     <runOrder>alphabetical</runOrder>
                     <reportsDirectory>${junit.utReportFolder}</reportsDirectory>

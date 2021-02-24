@@ -2,7 +2,6 @@ package fr.redfroggy.bdd.restapi.glue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.restapi.scope.ScenarioScope;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -20,7 +19,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -244,11 +242,11 @@ abstract class AbstractBddStepDefinition {
     void checkJsonPath(String jsonPath, String expectedValue, boolean isNot, boolean mandatory) {
         Object currentValue = checkJsonPathExists(jsonPath, mandatory);
 
-        if (currentValue == null && !mandatory) {
+        if (mandatory) {
+            assertThat(String.valueOf(currentValue)).isNotEmpty();
+        } else if (currentValue == null) {
             return;
         }
-
-        assertThat(String.valueOf(currentValue)).isNotEmpty();
 
         if (currentValue instanceof Collection) {
             checkJsonCollection((Collection) currentValue, expectedValue, isNot);

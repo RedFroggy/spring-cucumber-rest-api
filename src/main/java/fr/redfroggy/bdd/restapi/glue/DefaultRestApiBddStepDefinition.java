@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
 
