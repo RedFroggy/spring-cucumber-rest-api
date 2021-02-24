@@ -8,6 +8,7 @@
 <div align="center">
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/fuck-it-ship-it.svg"/></a>
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/built-with-love.svg"/></a>
+  <a href="https://img.shields.io"><img alt="Spring" src="https://img.shields.io/badge/spring%20-%236DB33F.svg?&style=for-the-badge&logo=spring&logoColor=white"/></a>
 </div>
 <div align="center">
    <a href="https://maven-badges.herokuapp.com/maven-central/fr.redfroggy.test.bdd/cucumber-restapi"><img src="https://maven-badges.herokuapp.com/maven-central/fr.redfroggy.test.bdd/cucumber-restapi/badge.svg?style=plastic" /></a>
@@ -15,10 +16,6 @@
    <a href="https://codecov.io/gh/RedFroggy/spring-cucumber-rest-api"><img src="https://codecov.io/gh/RedFroggy/spring-cucumber-rest-api/branch/master/graph/badge.svg?token=XM9R6ZV9SJ"/></a>
    <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg"/></a>
    <a href="https://opensource.org/licenses/mit-license.php"><img src="https://badges.frapsoft.com/os/mit/mit.svg?v=103"/></a>
-</div>
-<div align="center">
-   <img alt="Spring" src="https://img.shields.io/badge/spring%20-%236DB33F.svg?&style=for-the-badge&logo=spring&logoColor=white"/>
-   <img alt="Cucumber" width="45" height="20" src="assets/cucumber.png"/>
 </div>
 <br/>
 <br/>
