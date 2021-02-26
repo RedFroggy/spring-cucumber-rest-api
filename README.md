@@ -1,4 +1,4 @@
-# Test your REST API with Spring, Cucumber and Gherkin !
+# Test your local and remote REST API with Spring boot, Cucumber and Gherkin !
 
 <div align="center">
   <a name="logo" href="https://www.redfroggy.fr"><img src="assets/logo.png" alt="RedFroggy"></a>
