@@ -1,13 +1,10 @@
-package fr.redfroggy.bdd.glue;
+package fr.redfroggy.bdd.restapi.glue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
-import fr.redfroggy.bdd.scope.ScenarioScope;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.AssertionsForClassTypes;
-import org.junit.Assert;
+import fr.redfroggy.bdd.restapi.scope.ScenarioScope;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +12,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -77,7 +73,7 @@ abstract class AbstractBddStepDefinition {
     void setHeader(String name, String value) {
         assertThat(name).isNotNull();
         assertThat(value).isNotNull();
-        value = replaceDynamicParameters(value);
+        value = replaceDynamicParameters(value, false);
         headers.set(name, value);
     }
 
@@ -100,16 +96,8 @@ abstract class AbstractBddStepDefinition {
      */
     void addHeaders(Map<String, String> newHeaders) {
         assertThat(newHeaders).isNotEmpty();
-        newHeaders.forEach((key, value) -> {
-
-            List<String> headerValues = this.headers.get(key);
-            if (headerValues == null) {
-                headerValues = Collections.singletonList(value);
-            } else {
-                headerValues.add(value);
-            }
-            this.headers.put(key, headerValues);
-        });
+        newHeaders.forEach((key, value) ->
+                this.headers.put(key,  Collections.singletonList(value)));
     }
 
     /**
@@ -122,8 +110,8 @@ abstract class AbstractBddStepDefinition {
      */
     void setBody(String body) throws IOException {
         assertThat(body).isNotEmpty();
-        body = replaceDynamicParameters(body);
-        this.body = objectMapper.readValue(body, Object.class);
+        String sanitizedBody = replaceDynamicParameters(body, true);
+        this.body = objectMapper.readValue(sanitizedBody, Object.class);
     }
 
     /**
@@ -138,14 +126,10 @@ abstract class AbstractBddStepDefinition {
         assertThat(resource).isNotEmpty();
         assertThat(method).isNotNull();
 
-        resource = replaceDynamicParameters(resource);
+        resource = replaceDynamicParameters(resource, true);
 
-        boolean writeMode = !HttpMethod.GET.equals(method) && !HttpMethod.DELETE.equals(method)
-                && !HttpMethod.OPTIONS.equals(method) && !HttpMethod.HEAD.equals(method);
-
-        if (!resource.contains("/")) {
-            resource = "/" + resource;
-        }
+        boolean writeMode = HttpMethod.PUT.equals(method) || HttpMethod.POST.equals(method)
+                || HttpMethod.PATCH.equals(method);
 
         HttpEntity<Object> httpEntity;
 
@@ -154,7 +138,6 @@ abstract class AbstractBddStepDefinition {
         } else {
             httpEntity = new HttpEntity<>(headers);
         }
-
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUri + resource);
         queryParams.forEach(builder::queryParam);
@@ -173,6 +156,7 @@ abstract class AbstractBddStepDefinition {
      */
     void checkStatus(int status, boolean isNot) {
         assertThat(status).isGreaterThan(0);
+
         if (isNot) {
             assertThat(responseEntity.getStatusCodeValue()).isNotEqualTo(status);
         } else {
@@ -192,6 +176,7 @@ abstract class AbstractBddStepDefinition {
     List<String> checkHeaderExists(String headerName, boolean isNot) {
         assertThat(headerName).isNotEmpty();
         assertThat(responseEntity.getHeaders()).isNotNull();
+
         if (!isNot) {
             assertThat(responseEntity.getHeaders().get(headerName)).isNotNull();
             return responseEntity.getHeaders().get(headerName);
@@ -213,9 +198,7 @@ abstract class AbstractBddStepDefinition {
      */
     void checkHeaderEqual(String headerName, String headerValue, boolean isNot) {
         assertThat(headerName).isNotEmpty();
-
         assertThat(headerValue).isNotEmpty();
-
         assertThat(responseEntity.getHeaders()).isNotNull();
 
         if (!isNot) {
@@ -247,7 +230,6 @@ abstract class AbstractBddStepDefinition {
      */
     void checkBodyContains(String bodyValue) {
         assertThat(bodyValue).isNotEmpty();
-
         assertThat(responseEntity.getBody()).contains(bodyValue);
     }
 
@@ -264,13 +246,10 @@ abstract class AbstractBddStepDefinition {
 
     void checkJsonPathDoesntExist(String jsonPath) {
         ReadContext ctx = getBodyDocument();
-
         if (ctx != null) {
             assertThat(jsonPath).isNotEmpty();
-
-            assertThatThrownBy(() -> ctx.read(jsonPath))
-                    .isExactlyInstanceOf(PathNotFoundException.class)
-                    .as("check path " + jsonPath +" shouldnt exist");
+            /*assertThatThrownBy(() -> ctx.read(jsonPath))
+                    .isExactlyInstanceOf(PathNotFoundException.class);*/
         }
     }
 
@@ -313,15 +292,11 @@ abstract class AbstractBddStepDefinition {
      */
     private void checkJsonValue(Collection pathValue, String jsonValue, boolean isNot) {
         assertThat(pathValue).isNotEmpty();
-        Object jsonValueToEvaluate = jsonValue;
-        if (pathValue.iterator().next() instanceof Boolean) {
-            jsonValueToEvaluate = Boolean.valueOf(jsonValue);
-        }
 
         if (!isNot) {
-            assertThat(pathValue).contains(jsonValueToEvaluate);
+            assertThat(pathValue).isEqualTo(JsonPath.parse(jsonValue).json());
         } else {
-            assertThat(pathValue).doesNotContain(jsonValueToEvaluate);
+            assertThat(pathValue).isNotEqualTo(JsonPath.parse(jsonValue).json());
         }
     }
 
@@ -350,9 +325,7 @@ abstract class AbstractBddStepDefinition {
      *            new header name in the scenario scope
      */
     void storeHeader(String headerName, String headerAlias) {
-
         assertThat(headerName).isNotEmpty();
-
         assertThat(headerAlias).isNotEmpty();
 
         List<String> headerValues = checkHeaderExists(headerName, false);
@@ -371,7 +344,6 @@ abstract class AbstractBddStepDefinition {
      */
     void storeJsonPath(String jsonPath, String jsonPathAlias) {
         assertThat(jsonPath).isNotEmpty();
-
         assertThat(jsonPathAlias).isNotEmpty();
 
         Object pathValue = getJsonPath(jsonPath);
@@ -387,8 +359,18 @@ abstract class AbstractBddStepDefinition {
      *            expected value
      */
     void checkScenarioVariable(String property, String value) {
-        if (!CollectionUtils.isEmpty(scenarioScope.getJsonPaths())) {
-            Assert.assertEquals(scenarioScope.getJsonPaths().get(property), value);
+        Object scopeValue;
+        scopeValue = scenarioScope.getJsonPaths().get(property);
+
+        if (scopeValue == null) {
+            scopeValue = scenarioScope.getHeaders().get(property);
+        }
+        assertThat(scopeValue).isNotNull();
+
+        if (scopeValue instanceof Collection) {
+            assertThat(((Collection) scopeValue)).contains(value);
+        } else {
+            assertThat(scopeValue).isEqualTo(value);
         }
     }
 
@@ -403,7 +385,6 @@ abstract class AbstractBddStepDefinition {
             return null;
         }
 
-        // Object document = Configuration.defaultConfiguration().jsonProvider().parse();
         ReadContext ctx = JsonPath.parse(responseEntity.getBody());
         assertThat(ctx).isNotNull();
 
@@ -434,14 +415,16 @@ abstract class AbstractBddStepDefinition {
         return pathValue;
     }
 
-    protected String replaceDynamicParameters(String value) {
+    protected String replaceDynamicParameters(String value, boolean jsonPath) {
         Pattern pattern = Pattern.compile("`\\${1}(.*?)`");
         Matcher matcher = pattern.matcher(value);
         if (matcher.find()) {
-            Object scopeValue = scenarioScope.getJsonPaths().get(matcher.group(1));
-            if (scopeValue != null) {
-                return replaceDynamicParameters(value.replace("`$"+ matcher.group(1) +"`", scopeValue.toString()));
-            }
+            Object scopeValue = jsonPath ? scenarioScope.getJsonPaths().get(matcher.group(1))
+                    : scenarioScope.getHeaders().get(matcher.group(1));
+            assertThat(scopeValue).isNotNull();
+
+            return replaceDynamicParameters(value.replace("`$"+ matcher.group(1) +"`",
+                    scopeValue.toString()), jsonPath);
         }
         return value;
     }

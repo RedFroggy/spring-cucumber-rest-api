@@ -14,7 +14,10 @@ before_install: |
   nvm use 11
 # install dependencies used in after_success here because they don't get cached if called in after_success
 before_script:
-  - yarn global add https://github.com/conveyal/maven-semantic-release/archive/v4.5.0.tar.gz semantic-release@15
+  # install node 12
+  - nvm install '12'
+  - nvm use 12
+  - yarn global add https://github.com/conveyal/maven-semantic-release.git#8eb976c8ec57b2fd1cee86f119f80ab1f8a38948 semantic-release
 cache:
   directories:
     - $HOME/.m2

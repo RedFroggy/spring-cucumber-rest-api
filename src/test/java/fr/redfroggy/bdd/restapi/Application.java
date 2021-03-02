@@ -1,4 +1,4 @@
-package fr.redfroggy.bdd;
+package fr.redfroggy.bdd.restapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

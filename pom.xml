@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.redfroggy.test.bdd</groupId>
-    <artifactId>cucumber-gherkin</artifactId>
-    <version>1.1.8-SNAPSHOT</version>
+    <artifactId>cucumber-restapi</artifactId>
+    <version>1.4.1-SNAPSHOT</version>
 
     <name>Cucumber Spring rest Api</name>
     <description>REST API tests with Spring, Cucumber and Gherkin</description>
@@ -37,11 +37,11 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.5.RELEASE</version>
+        <version>2.4.3</version>
     </parent>
 
     <properties>
-        <cucumber-version>6.9.1</cucumber-version>
+        <cucumber-version>6.10.0</cucumber-version>
         <jsonpath-version>2.5.0</jsonpath-version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
@@ -51,7 +51,7 @@
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
         <wiremock.version>2.27.2</wiremock.version>
-        <assertj.version>3.6.2</assertj.version>
+        <assertj.version>3.19.0</assertj.version>
         <commons-io.version>2.8.0</commons-io.version>
     </properties>
 
@@ -256,6 +256,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <!-- Use the older JUnit 4 provider -->
+                        <artifactId>surefire-junit4</artifactId>
+                        <version>2.22.2</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <!-- Force alphabetical order to have a reproducible build -->
                     <runOrder>alphabetical</runOrder>
@@ -299,12 +307,12 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>90%</minimum>
+                                            <minimum>100%</minimum>
                                         </limit>
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>70%</minimum>
+                                            <minimum>100%</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

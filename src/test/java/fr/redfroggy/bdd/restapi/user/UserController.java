@@ -1,6 +1,7 @@
-package fr.redfroggy.bdd.user;
+package fr.redfroggy.bdd.restapi.user;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wiremock.org.apache.commons.lang3.StringUtils;
@@ -35,7 +36,9 @@ final class UserController {
                     .notFound().build();
         }
         return ResponseEntity.
-                ok(currentUser);
+                ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .body(currentUser);
     }
 
     @PostMapping(value = "/users")

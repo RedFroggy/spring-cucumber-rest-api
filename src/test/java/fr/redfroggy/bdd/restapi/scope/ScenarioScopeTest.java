@@ -1,4 +1,4 @@
-package fr.redfroggy.bdd.scope;
+package fr.redfroggy.bdd.restapi.scope;
 
 import org.junit.Assert;
 import org.junit.Test;
