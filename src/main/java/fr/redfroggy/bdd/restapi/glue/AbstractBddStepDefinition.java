@@ -5,12 +5,12 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.restapi.scope.ScenarioScope;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -142,6 +142,30 @@ abstract class AbstractBddStepDefinition {
 
         responseEntity = template.exchange(builder.build().toUri(), method, httpEntity, String.class);
         assertThat(responseEntity).isNotNull();
+    }
+
+    void uploadFile(String resource, String filePath, String method) throws IOException {
+
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        byte[] fileBytes = StreamUtils.copyToByteArray(getClass().getClassLoader()
+                .getResourceAsStream(filePath));
+
+        MultiValueMap<String, String> fileMap = new LinkedMultiValueMap<>();
+        ContentDisposition contentDisposition = ContentDisposition
+                .builder("form-data")
+                .name("file")
+                .filename("file_uploaded.pdf")
+                .build();
+
+        fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        HttpEntity<byte[]> fileEntity = new HttpEntity<>(fileBytes, fileMap);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", fileEntity);
+        this.body = body;
+
+        this.request(resource, HttpMethod.valueOf(method));
     }
 
     void checkStatus(String status, boolean isNot) {

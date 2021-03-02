@@ -14,4 +14,5 @@ import org.junit.runner.RunWith;
         plugin = {"pretty"},
         features = "src/test/resources/features",
         glue = {"fr.redfroggy.bdd.restapi.glue"})
-public  final class RestApiCucumberTest {}
+public  final class RestApiCucumberTest {
+}

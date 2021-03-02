@@ -8,6 +8,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpMethod;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -156,6 +157,12 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
     @When("^I HEAD (.*)$")
     public void head(String resource) {
         this.request(resource, HttpMethod.HEAD);
+    }
+
+
+    @When("^I upload file (.*) to (.*) (.*)$")
+    public void uploadFileTo(String filePath, String method, String resource) throws IOException {
+        this.uploadFile(resource, filePath, method);
     }
 
     /**

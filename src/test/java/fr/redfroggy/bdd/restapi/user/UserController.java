@@ -1,21 +1,28 @@
 package fr.redfroggy.bdd.restapi.user;
 
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import org.junit.Assert;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import wiremock.org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
-final class UserController {
+public final class UserController {
 
-    private static List<UserDTO> users = new ArrayList<>();
+    public static List<UserDTO> users = new ArrayList<>();
 
     @GetMapping("/users")
     public List<UserDTO> getAll(@RequestParam(value = "name", required = false) String name) {
@@ -57,6 +64,34 @@ final class UserController {
                 badRequest()
                 .build();
 
+    }
+
+    @PostMapping(value = "/users", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<UserDTO>> uploadFile(@RequestParam(name = "file") MultipartFile file) throws IOException {
+
+        CsvToBean<UserCsvLine> csvBean = new CsvToBeanBuilder<UserCsvLine>(new InputStreamReader(file.getInputStream()))
+                .withType(UserCsvLine.class)  // Convert a csv string line to PaymentIdentityAuditImportCsvLine
+                .withIgnoreLeadingWhiteSpace(true) // White space in front of a quote in a field is ignored
+                .withSeparator(';')
+                .build();
+
+        Assert.assertNotNull(csvBean);
+        List<UserDTO> csvUsers = csvBean.parse()
+                .stream()
+                .map(userCsvLine -> {
+                    UserDTO userDTO = new UserDTO();
+                    userDTO.setId(userCsvLine.getId());
+                    userDTO.setAge(userCsvLine.getAge());
+                    userDTO.setFirstName(userCsvLine.getFirstName());
+                    userDTO.setLastName(userCsvLine.getLastName());
+
+                    return userDTO;
+                })
+                .collect(Collectors.toList());
+
+        users.addAll(csvUsers);
+
+        return ResponseEntity.ok(csvUsers);
     }
 
     @PutMapping(value = "/users/{id}")
@@ -102,7 +137,7 @@ final class UserController {
     }
 
     @DeleteMapping(value = "/users/{id}")
-    public ResponseEntity<UserDTO> addUser(@PathVariable("id") String id) {
+    public ResponseEntity<UserDTO> deleteUser(@PathVariable("id") String id) {
 
         UserDTO currentUser = users.stream().filter(u -> u.getId()
                 .equals(id)).findFirst()
