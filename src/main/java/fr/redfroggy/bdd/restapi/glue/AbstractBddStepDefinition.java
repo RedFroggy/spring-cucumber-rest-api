@@ -145,17 +145,23 @@ abstract class AbstractBddStepDefinition {
     }
 
     void uploadFile(String resource, String filePath, String method) throws IOException {
+        assertThat(resource).isNotEmpty();
+        assertThat(method).isNotEmpty();
+        assertThat(filePath).isNotEmpty();
 
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         byte[] fileBytes = StreamUtils.copyToByteArray(getClass().getClassLoader()
                 .getResourceAsStream(filePath));
 
+        String[] urlParts = filePath.split("/");
+        String fileName = urlParts[urlParts.length -1];
+
         MultiValueMap<String, String> fileMap = new LinkedMultiValueMap<>();
         ContentDisposition contentDisposition = ContentDisposition
                 .builder("form-data")
                 .name("file")
-                .filename("file_uploaded.pdf")
+                .filename(fileName)
                 .build();
 
         fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
