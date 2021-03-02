@@ -158,13 +158,9 @@ abstract class AbstractBddStepDefinition {
         String fileName = urlParts[urlParts.length -1];
 
         MultiValueMap<String, String> fileMap = new LinkedMultiValueMap<>();
-        ContentDisposition contentDisposition = ContentDisposition
-                .builder("form-data")
-                .name("file")
-                .filename(fileName)
-                .build();
 
-        fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        String contentDisposition = String.format("form-data; name=\"file\"; filename=\"%s\"", fileName);
+        fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition);
         HttpEntity<byte[]> fileEntity = new HttpEntity<>(fileBytes, fileMap);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
