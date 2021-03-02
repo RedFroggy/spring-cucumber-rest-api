@@ -2,7 +2,6 @@ package fr.redfroggy.bdd.restapi.glue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.restapi.scope.ScenarioScope;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -20,7 +19,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -142,25 +140,19 @@ abstract class AbstractBddStepDefinition {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUri + resource);
         queryParams.forEach(builder::queryParam);
 
-        responseEntity = this.template.exchange(builder.build().toUri(), method, httpEntity, String.class);
+        responseEntity = template.exchange(builder.build().toUri(), method, httpEntity, String.class);
         assertThat(responseEntity).isNotNull();
     }
 
-    /**
-     * Check http response status code
-     *
-     * @param status
-     *            expected/unexpected status
-     * @param isNot
-     *            if true, test equality, inequality if false
-     */
-    void checkStatus(int status, boolean isNot) {
-        assertThat(status).isGreaterThan(0);
+    void checkStatus(String status, boolean isNot) {
+
+        int sanitizedStatus = Integer.parseInt(replaceDynamicParameters(status, true));
+        assertThat(sanitizedStatus).isGreaterThan(0);
 
         if (isNot) {
-            assertThat(responseEntity.getStatusCodeValue()).isNotEqualTo(status);
+            assertThat(responseEntity.getStatusCodeValue()).isNotEqualTo(sanitizedStatus);
         } else {
-            assertThat(responseEntity.getStatusCodeValue()).isEqualTo(status);
+            assertThat(responseEntity.getStatusCodeValue()).isEqualTo(sanitizedStatus);
         }
     }
 
@@ -229,74 +221,54 @@ abstract class AbstractBddStepDefinition {
      *            expected content
      */
     void checkBodyContains(String bodyValue) {
-        assertThat(bodyValue).isNotEmpty();
-        assertThat(responseEntity.getBody()).contains(bodyValue);
+
+        String sanitizedValue = replaceDynamicParameters(bodyValue, true);
+
+        assertThat(sanitizedValue).isNotEmpty();
+        assertThat(responseEntity.getBody()).contains(sanitizedValue);
     }
 
-    /**
-     * Test json path validity
-     *
-     * @param jsonPath
-     *            json path query
-     * @return value found using <code>jsonPath</code>
-     */
-    Object checkJsonPathExists(String jsonPath) {
-        return getJsonPath(jsonPath);
+    Object checkJsonPathExists(String jsonPath, boolean mandatory) {
+        return getJsonPathValue(jsonPath, mandatory);
     }
 
     void checkJsonPathDoesntExist(String jsonPath) {
         ReadContext ctx = getBodyDocument();
         if (ctx != null) {
             assertThat(jsonPath).isNotEmpty();
-            /*assertThatThrownBy(() -> ctx.read(jsonPath))
-                    .isExactlyInstanceOf(PathNotFoundException.class);*/
         }
     }
 
-    /**
-     * Test json path value
-     *
-     * @param jsonPath
-     *            json path query
-     * @param jsonValueString
-     *            expected/unexpected json path value
-     * @param isNot
-     *            if true, test equality, inequality if false
-     */
-    void checkJsonPath(String jsonPath, String jsonValueString, boolean isNot) {
-        Object pathValue = checkJsonPathExists(jsonPath);
-        assertThat(String.valueOf(pathValue)).isNotEmpty();
+    void checkJsonPath(String jsonPath, String expectedValue, boolean isNot, boolean mandatory) {
+        Object currentValue = checkJsonPathExists(jsonPath, mandatory);
 
-        if (pathValue instanceof Collection) {
-            checkJsonValue((Collection) pathValue, jsonValueString, isNot);
+        if (mandatory) {
+            assertThat(String.valueOf(currentValue)).isNotEmpty();
+        } else if (currentValue == null) {
             return;
         }
-        Object jsonValue = ReflectionTestUtils.invokeMethod(pathValue, "valueOf", jsonValueString);
+
+        if (currentValue instanceof Collection) {
+            checkJsonCollection((Collection) currentValue, expectedValue, isNot);
+            return;
+        }
+        String sanitizedExpectedValue = replaceDynamicParameters(expectedValue, true);
+        Object expectedJsonValue = ReflectionTestUtils.invokeMethod(currentValue, "valueOf", sanitizedExpectedValue);
 
         if (!isNot) {
-            assertThat(pathValue).isEqualTo(jsonValue);
+            assertThat(currentValue).isEqualTo(expectedJsonValue);
         } else {
-            assertThat(pathValue).isNotEqualTo(jsonValue);
+            assertThat(currentValue).isNotEqualTo(expectedJsonValue);
         }
     }
 
-    /**
-     * Test json path value
-     *
-     * @param pathValue
-     *            json path array value
-     * @param jsonValue
-     *            expected/unexpected json path value
-     * @param isNot
-     *            if true, test equality, inequality if false
-     */
-    private void checkJsonValue(Collection pathValue, String jsonValue, boolean isNot) {
-        assertThat(pathValue).isNotEmpty();
+    private void checkJsonCollection(Collection currentValue, String jsonValue, boolean isNot) {
+        assertThat(currentValue).isNotEmpty();
 
         if (!isNot) {
-            assertThat(pathValue).isEqualTo(JsonPath.parse(jsonValue).json());
+            assertThat(currentValue).isEqualTo(JsonPath.parse(jsonValue).json());
         } else {
-            assertThat(pathValue).isNotEqualTo(JsonPath.parse(jsonValue).json());
+            assertThat(currentValue).isNotEqualTo(JsonPath.parse(jsonValue).json());
         }
     }
 
@@ -309,7 +281,7 @@ abstract class AbstractBddStepDefinition {
      *            expected length (-1 to not control the size)
      */
     void checkJsonPathIsArray(String jsonPath, int length) {
-        Object pathValue = getJsonPath(jsonPath);
+        Object pathValue = getJsonPathValue(jsonPath, true);
         assertThat(pathValue).isInstanceOf(Collection.class);
         if (length != -1) {
             assertThat(((Collection) pathValue)).hasSize(length);
@@ -346,7 +318,7 @@ abstract class AbstractBddStepDefinition {
         assertThat(jsonPath).isNotEmpty();
         assertThat(jsonPathAlias).isNotEmpty();
 
-        Object pathValue = getJsonPath(jsonPath);
+        Object pathValue = getJsonPathValue(jsonPath, true);
         scenarioScope.getJsonPaths().put(jsonPathAlias, pathValue);
     }
 
@@ -391,14 +363,7 @@ abstract class AbstractBddStepDefinition {
         return ctx;
     }
 
-    /**
-     * Get values for a given json path query and the http response body
-     *
-     * @param jsonPath
-     *            json path query
-     * @return json path value
-     */
-    protected Object getJsonPath(String jsonPath) {
+    protected Object getJsonPathValue(String jsonPath, boolean mandatory) {
 
         assertThat(jsonPath).isNotEmpty();
 
@@ -410,7 +375,9 @@ abstract class AbstractBddStepDefinition {
 
         Object pathValue = ctx.read(jsonPath);
 
-        assertThat(pathValue).isNotNull();
+        if (mandatory) {
+            assertThat(pathValue).isNotNull();
+        }
 
         return pathValue;
     }

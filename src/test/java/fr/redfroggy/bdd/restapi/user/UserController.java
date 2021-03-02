@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/api")
 final class UserController {
 
     private static List<UserDTO> users = new ArrayList<>();

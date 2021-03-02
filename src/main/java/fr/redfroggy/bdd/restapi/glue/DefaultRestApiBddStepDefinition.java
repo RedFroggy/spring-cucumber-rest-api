@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
 
@@ -166,7 +165,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      *               status code to test
      */
     @Then("^http response code should be (\\d+)$")
-    public void responseCode(Integer status) {
+    public void responseCode(String status) {
         this.checkStatus(status, false);
     }
 
@@ -177,7 +176,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      *               status code to test
      */
     @Then("^http response code should not be (\\d+)$")
-    public void notResponseCode(Integer status) {
+    public void notResponseCode(String status) {
         this.checkStatus(status, true);
     }
 
@@ -260,7 +259,7 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
      */
     @Then("^http response body path (.*) should exists$")
     public void bodyPathExists(String jsonPath) {
-        this.checkJsonPathExists(jsonPath);
+        this.checkJsonPathExists(jsonPath, true);
     }
 
     /**
@@ -277,37 +276,37 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
     /**
      * Test the given json path exists in the response body and match the given
      * value
-     *
-     * @param jsonPath
-     *                 json path query
-     * @param value
-     *                 expected value
      */
     @Then("^http response body path (.*) should be (.*)$")
-    public void bodyPathEqual(String jsonPath, String value) {
-        this.checkJsonPath(jsonPath, value, false);
-    }
-
-    @Then("^http response body path (.*) should not have content$")
-    public void emptyBodyPath(String jsonPath) {
-        Object json = getJsonPath(jsonPath);
-
-        if (json != null) {
-            assertThat(((Collection<?>) json).isEmpty()).isTrue();
-        }
+    public void bodyPathShouldBeEqualTo(String jsonPath, String value) {
+        this.checkJsonPath(jsonPath, value, false, false);
     }
 
     /**
      * Test the given json path exists and does not match the given value
-     *
-     * @param jsonPath
-     *                 json path query
-     * @param value
-     *                 unexpected value
      */
     @Then("^http response body path (.*) should not be (.*)$")
-    public void bodyPathNotEqual(String jsonPath, String value) {
-        this.checkJsonPath(jsonPath, value, true);
+    public void bodyPathShouldNotBeEqualTo(String jsonPath, String value) {
+        this.checkJsonPath(jsonPath, value, true, false);
+    }
+
+    @Then("^http response body path (.*) must be (.*)$")
+    public void bodyPathMustBeEqualTo(String jsonPath, String value) {
+        this.checkJsonPath(jsonPath, value, false, true);
+    }
+
+    @Then("^http response body path (.*) must not be (.*)$")
+    public void bodyPathMustNotBeEqualTo(String jsonPath, String value) {
+        this.checkJsonPath(jsonPath, value, true, true);
+    }
+
+    @Then("^http response body path (.*) should not have content$")
+    public void bodyPathShouldNotHaveContent(String jsonPath) {
+        Object json = getJsonPathValue(jsonPath, true);
+
+        if (json != null) {
+            assertThat(((Collection<?>) json).isEmpty()).isTrue();
+        }
     }
 
     /**

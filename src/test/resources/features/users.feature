@@ -1,14 +1,14 @@
 Feature: Users api tests
 
   Background:
-    Given http baseUri is http://localhost:8080
+    Given http baseUri is /api/
     And I set Accept-Language http header to en-US
     And I set http headers to:
     | Accept        | application/json  |
     | Content-Type  | application/json  |
   
   Scenario: Should be authenticated
-    When I HEAD /authenticated
+    When I HEAD authenticated
     Then http response code should be 401
     When I authenticate with login/password tstark/marvel
     And I HEAD /authenticated
@@ -22,12 +22,14 @@ Feature: Users api tests
     Then http response header Content-Type should not be application/xml
     And http response code should be 201
     And http response header Content-Type should be application/json
-    And http response body path $.id should be 1
+    And http response body path $.id must be 1
+    # Should not fail even if relatedTo has null value, will fail only if relatedTo exists and its value is different from 1
+    And http response body path $.relatedTo should be 1
     And http response body path $.firstName should be Tony
     And http response body path $.lastName should be Stark
     And http response body path $.age should be 40
     And http response body path $.sessionIds should be ["43233333", "45654345"]
-    And http response body path $.sessionIds should not be []
+    And http response body path $.sessionIds must not be []
     And I store the value of http body path $.id as starkUser in scenario scope
     And I store the value of http body path $.sessionIds.[0] as firstSessionId in scenario scope
     And http value of scenario variable starkUser should be 1
@@ -72,6 +74,7 @@ Feature: Users api tests
     Then http response code should be 200
     And http response body is typed as array for path $
     And http response body is typed as array using path $ with length 2
+    And http response body path $.[0].id should be `$starkUser`
     And http response body path $.[0].firstName should be Tony
     And http response body path $.[0].lastName should not be Wayne
     And http response body path $.[1].id should exists
@@ -104,6 +107,7 @@ Feature: Users api tests
     And http response body path $.age should be 60
     And I store the value of http response header Content-Type as httpContentType in scenario scope
     And http value of scenario variable httpContentType should be application/json
+    And http response body should contain `$firstSessionId`
 
   Scenario: Get user
     When I GET /users/2
