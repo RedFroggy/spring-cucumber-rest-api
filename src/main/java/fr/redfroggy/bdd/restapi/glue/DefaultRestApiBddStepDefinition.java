@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -160,9 +161,9 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
     }
 
 
-    @When("^I upload file (.*) to (.*) (.*)$")
-    public void uploadFileTo(String filePath, String method, String resource) throws IOException {
-        this.uploadFile(resource, filePath, method);
+    @When("^I send a multipart (.*) request to (.*) with:$")
+    public void uploadFile(String method, String resource, List<Map<String, String>> data) {
+        this.postMultipart(method, resource, data);
     }
 
     /**

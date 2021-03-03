@@ -144,30 +144,17 @@ abstract class AbstractBddStepDefinition {
         assertThat(responseEntity).isNotNull();
     }
 
-    void uploadFile(String resource, String filePath, String method) throws IOException {
-        assertThat(resource).isNotEmpty();
-        assertThat(method).isNotEmpty();
-        assertThat(filePath).isNotEmpty();
+    void postMultipart(String method, String uri, List<Map<String, String>> data) {
+        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        data.forEach(row -> {
+            parameters.add(row.get("Name"),
+                    new org.springframework.core.io.ClassPathResource(row.get("Filepath")));
+        });
 
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        this.headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        this.body = parameters;
 
-        byte[] fileBytes = StreamUtils.copyToByteArray(getClass().getClassLoader()
-                .getResourceAsStream(filePath));
-
-        String[] urlParts = filePath.split("/");
-        String fileName = urlParts[urlParts.length -1];
-
-        MultiValueMap<String, String> fileMap = new LinkedMultiValueMap<>();
-
-        String contentDisposition = String.format("form-data; name=\"file\"; filename=\"%s\"", fileName);
-        fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition);
-        HttpEntity<byte[]> fileEntity = new HttpEntity<>(fileBytes, fileMap);
-
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", fileEntity);
-        this.body = body;
-
-        this.request(resource, HttpMethod.valueOf(method));
+        request(uri, HttpMethod.valueOf(method));
     }
 
     void checkStatus(String status, boolean isNot) {
