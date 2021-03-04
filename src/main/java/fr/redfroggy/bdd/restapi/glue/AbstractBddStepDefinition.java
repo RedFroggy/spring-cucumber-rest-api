@@ -5,12 +5,12 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.restapi.scope.ScenarioScope;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -142,6 +142,19 @@ abstract class AbstractBddStepDefinition {
 
         responseEntity = template.exchange(builder.build().toUri(), method, httpEntity, String.class);
         assertThat(responseEntity).isNotNull();
+    }
+
+    void postMultipart(String method, String uri, List<Map<String, String>> data) {
+        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        data.forEach(row -> {
+            parameters.add(row.get("Name"),
+                    new org.springframework.core.io.ClassPathResource(row.get("Filepath")));
+        });
+
+        this.headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        this.body = parameters;
+
+        request(uri, HttpMethod.valueOf(method));
     }
 
     void checkStatus(String status, boolean isNot) {
