@@ -56,6 +56,11 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
         this.setBody(body);
     }
 
+    @Given("^I set http body with file (.*)$")
+    public void setBodyWithFile(String filePath) throws IOException {
+        super.setBodyWithFile(filePath);
+    }
+
     /**
      * Add a new http header
      *
