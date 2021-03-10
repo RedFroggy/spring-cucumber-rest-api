@@ -51,6 +51,17 @@ Feature: Users api tests
     And http response body path $.relatedTo.id should be 1
     And http response body path $.sessionIds should be ["43233333"]
 
+  Scenario: Add bruce banner user
+    And I set Authorization http header to `$authToken`
+    And I set http body with file fixtures/bruce-banner.user.json
+    And I POST /users
+    And http response code should be 201
+    And http response body path $.id should be 15948349393
+    And http response body path $.firstName should be Bruce
+    And http response body path $.lastName should be Banner
+    And http response body path $.age should be 45
+    And http response body path $.sessionIds should be ["99869448"]
+    
   Scenario: Update tony stark user
     When I set http body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"60"}
     And I PUT /users/1
@@ -74,7 +85,7 @@ Feature: Users api tests
     And http response body should be valid json
     Then http response code should be 200
     And http response body is typed as array for path $
-    And http response body is typed as array using path $ with length 2
+    And http response body is typed as array using path $ with length 3
     And http response body path $.[0].id should be `$starkUser`
     And http response body path $.[0].firstName should be Tony
     And http response body path $.[0].lastName should not be Wayne
@@ -83,7 +94,7 @@ Feature: Users api tests
     And http response body should contain Bruce
 
   Scenario: Search for valid users
-    And I set http query parameter name to bruce
+    And I set http query parameter name to wayne
     When I GET /users
     And http response body should be valid json
     Then http response code should be 200
@@ -134,6 +145,8 @@ Feature: Users api tests
     When I DELETE /users/1
     Then http response code should be 200
     And I DELETE /users/2
+    Then http response code should be 200
+    And I DELETE /users/15948349393
     Then http response code should be 200
     And  I GET /users
     And http response body is typed as array using path $ with length 0
