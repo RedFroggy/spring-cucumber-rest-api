@@ -101,7 +101,7 @@ Feature: Users api tests
     And http response body path $ should not have content
 
   Scenario: Get user Tony Stark
-    When I mock feign api call GET /public/characters/1 with return code 200 and body: {"comicName": "IronMan", "city": "New York", "mainColor": ["red", "yellow"]}
+    When I mock feign api call GET /public/characters/1?format=json with return code 200 and body: {"comicName": "IronMan", "city": "New York", "mainColor": ["red", "yellow"]}
     And I GET /users/1?format=json
     Then http response code should be 200
     And http response body path $.id should be 1
@@ -113,7 +113,7 @@ Feature: Users api tests
     And http response body should contain `$firstSessionId`
 
   Scenario: Get user Bruce Wayne
-    When I mock feign api call GET /public/characters/2 with return code 200 and body: {"comicName": "Batman", "city": "Gotham City", "mainColor": ["black"]}
+    When I mock feign api call GET /public/characters/2 with return code 200, content type: application/json and file: fixtures/bruce_wayne_marvel_api.fixture.json
     And I GET /users/2
     Then http response code should be 200
     And http response body path $.id should be 2

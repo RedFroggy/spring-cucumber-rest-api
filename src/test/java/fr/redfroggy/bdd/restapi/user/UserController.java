@@ -53,7 +53,7 @@ public final class UserController {
         ResponseEntity<UserDetailsDTO> responseUserDetails = userFeignService.getUserDetails(currentUser.getId(), format);
         Assert.assertNotNull(responseUserDetails);
         if (!responseUserDetails.getStatusCode().is2xxSuccessful()) {
-            return ResponseEntity.status(responseUserDetails.getStatusCode())
+            return ResponseEntity.badRequest()
                     .build();
         }
         currentUser.setDetails(responseUserDetails.getBody());
