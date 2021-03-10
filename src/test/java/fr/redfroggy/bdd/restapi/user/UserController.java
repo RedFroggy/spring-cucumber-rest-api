@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import wiremock.org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +21,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public final class UserController {
 
-    private final UserFeignService userFeignService;
+    private final UserDetailService userDetailService;
 
-    public UserController(UserFeignService userFeignService) {
-        this.userFeignService = userFeignService;
+    public UserController(UserDetailService userDetailService) {
+        this.userDetailService = userDetailService;
     }
 
     public static List<UserDTO> users = new ArrayList<>();
@@ -50,7 +49,7 @@ public final class UserController {
                     .notFound().build();
         }
 
-        ResponseEntity<UserDetailsDTO> responseUserDetails = userFeignService.getUserDetails(currentUser.getId(), format);
+        ResponseEntity<UserDetailsDTO> responseUserDetails = userDetailService.getUserDetails(currentUser.getId(), format);
         Assert.assertNotNull(responseUserDetails);
         if (!responseUserDetails.getStatusCode().is2xxSuccessful()) {
             return ResponseEntity.badRequest()

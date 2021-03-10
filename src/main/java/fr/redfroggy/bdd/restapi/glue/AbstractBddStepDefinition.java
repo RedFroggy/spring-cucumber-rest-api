@@ -433,7 +433,7 @@ abstract class AbstractBddStepDefinition {
         return value;
     }
 
-    protected void stubFeign(String method, String resource, int status, String mediaType, String body) throws URISyntaxException {
+    protected void mockThirdPartyApiCall(String method, String resource, int status, String mediaType, String body) throws URISyntaxException {
 
         String url = resource;
         MappingBuilder mappingBuilder;

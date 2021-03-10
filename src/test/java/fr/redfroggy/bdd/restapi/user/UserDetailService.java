@@ -7,14 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserFeignService {
+public class UserDetailService {
 
     @Value("${marvel.api.host}")
     private String apiHost;
 
     private final TestRestTemplate restTemplate;
 
-    public UserFeignService(TestRestTemplate restTemplate) {
+    public UserDetailService(TestRestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 

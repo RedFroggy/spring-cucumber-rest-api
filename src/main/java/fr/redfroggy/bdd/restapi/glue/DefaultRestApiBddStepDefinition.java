@@ -393,14 +393,14 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
         this.checkScenarioVariable(property, value);
     }
 
-    @Given("^I mock feign api call (.*) (.*) with return code (.*) and body: (.*)$")
-    public void mockFeignCallWithJSON(String method, String resource, int status, String willReturnJson) throws URISyntaxException {
-        stubFeign(method, resource, status, MediaType.APPLICATION_JSON_VALUE, willReturnJson);
+    @Given("^I mock third party api call (.*) (.*) with return code (.*) and body: (.*)$")
+    public void mockThirdPartyApiCallWithJSON(String method, String resource, int status, String willReturnJson) throws URISyntaxException {
+        mockThirdPartyApiCall(method, resource, status, MediaType.APPLICATION_JSON_VALUE, willReturnJson);
     }
 
-    @Given("^I mock feign api call (.*) (.*) with return code (.*), content type: (.*) and file: (.*)$")
-    public void mockFeignCallWithFileContent(String method, String resource, int status, String contentType, String filePath) throws IOException, URISyntaxException {
-        stubFeign(method, resource, status, contentType, StreamUtils
+    @Given("^I mock third party api call (.*) (.*) with return code (.*), content type: (.*) and file: (.*)$")
+    public void mockThirdPartyApiCallWithFileContent(String method, String resource, int status, String contentType, String filePath) throws IOException, URISyntaxException {
+        mockThirdPartyApiCall(method, resource, status, contentType, StreamUtils
                 .copyToString(getClass().getClassLoader()
                         .getResourceAsStream(filePath), StandardCharsets.UTF_8));
     }
