@@ -57,7 +57,6 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
         this.setBody(body);
     }
 
-
     @And("^I set http body path (.*) to (.*)$")
     public void setBodyWithJsonPath(String jsonPath, String value) {
         this.setBodyPathWithValue(jsonPath, value);
