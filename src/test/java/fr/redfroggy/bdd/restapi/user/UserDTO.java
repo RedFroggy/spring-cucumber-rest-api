@@ -14,6 +14,8 @@ public final class UserDTO extends PartialUserDTO {
 
     private List<String> sessionIds;
 
+    private UserDetailsDTO details;
+
     public String getId() {
         return id;
     }
@@ -52,5 +54,13 @@ public final class UserDTO extends PartialUserDTO {
 
     public void setSessionIds(List<String> sessionIds) {
         this.sessionIds = sessionIds;
+    }
+
+    public UserDetailsDTO getDetails() {
+        return details;
+    }
+
+    public void setDetails(UserDetailsDTO details) {
+        this.details = details;
     }
 }

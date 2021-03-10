@@ -12,7 +12,9 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
  * In this file you can add your own steps implementation.
  */
 @CucumberContextConfiguration
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = {
+        "marvel.api.host=http://localhost:8888"
+})
 public class DefaultRestApiStepDefinitionTest implements BddRestTemplateAuthentication {
 
     final TestRestTemplate template;

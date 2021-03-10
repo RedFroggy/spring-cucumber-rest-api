@@ -1,0 +1,3 @@
+marvel:
+  api:
+    host: https://gateway.marvel.com

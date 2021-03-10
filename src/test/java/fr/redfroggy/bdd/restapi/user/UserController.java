@@ -22,6 +22,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public final class UserController {
 
+    private final UserFeignService userFeignService;
+
+    public UserController(UserFeignService userFeignService) {
+        this.userFeignService = userFeignService;
+    }
+
     public static List<UserDTO> users = new ArrayList<>();
 
     @GetMapping("/users")
@@ -35,7 +41,7 @@ public final class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<UserDTO> get(@PathVariable("id") String id) {
+    public ResponseEntity<UserDTO> get(@PathVariable("id") String id, @RequestParam(required = false) String format) {
         UserDTO currentUser = users.stream().filter(u -> u.getId()
                 .equals(id)).findFirst()
                 .orElse(null);
@@ -43,6 +49,15 @@ public final class UserController {
             return ResponseEntity
                     .notFound().build();
         }
+
+        ResponseEntity<UserDetailsDTO> responseUserDetails = userFeignService.getUserDetails(currentUser.getId(), format);
+        Assert.assertNotNull(responseUserDetails);
+        if (!responseUserDetails.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.status(responseUserDetails.getStatusCode())
+                    .build();
+        }
+        currentUser.setDetails(responseUserDetails.getBody());
+
         return ResponseEntity.
                 ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

@@ -51,7 +51,8 @@ Feature: Users api tests
     And http response body path $.sessionIds should be ["43233333"]
 
   Scenario: Update tony stark user
-    When I set http body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"60"}
+    When I mock feign api call GET /public/characters/1 with return code 200 and body: {"comicName": "IronMan", "city": "New York", "mainColor": ["red", "yellow"]}
+    And I set http body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"60"}
     And I PUT /users/1
     Then http response code should be 200
     And http response body path $.age should be 60
@@ -60,7 +61,8 @@ Feature: Users api tests
     And http response body path $.age should be 60
 
   Scenario: Patch bruce wayne user
-    When I set http body to {"lastName":"WAYNE"}
+    When I mock feign api call GET /public/characters/2 with return code 200 and body: {"comicName": "Batman", "city": "Gotham City", "mainColor": ["black"]}
+    And I set http body to {"lastName":"WAYNE"}
     And I PATCH /users/2
     Then http response code should be 200
     And http response body path $.lastName should be WAYNE
@@ -98,8 +100,9 @@ Feature: Users api tests
     And http response body is typed as array using path $ with length 0
     And http response body path $ should not have content
 
-  Scenario: Get user
-    When I GET /users/1
+  Scenario: Get user Tony Stark
+    When I mock feign api call GET /public/characters/1 with return code 200 and body: {"comicName": "IronMan", "city": "New York", "mainColor": ["red", "yellow"]}
+    And I GET /users/1?format=json
     Then http response code should be 200
     And http response body path $.id should be 1
     And http response body path $.firstName should be Tony
@@ -109,8 +112,9 @@ Feature: Users api tests
     And http value of scenario variable httpContentType should be application/json
     And http response body should contain `$firstSessionId`
 
-  Scenario: Get user
-    When I GET /users/2
+  Scenario: Get user Bruce Wayne
+    When I mock feign api call GET /public/characters/2 with return code 200 and body: {"comicName": "Batman", "city": "Gotham City", "mainColor": ["black"]}
+    And I GET /users/2
     Then http response code should be 200
     And http response body path $.id should be 2
     And http response body path $.firstName should be Bruce

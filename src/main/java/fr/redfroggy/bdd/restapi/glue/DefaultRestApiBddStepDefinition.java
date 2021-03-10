@@ -6,9 +6,12 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -388,5 +391,17 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
     @Then("^http value of scenario variable (.*) should be (.*)$")
     public void scenarioVariableIsValid(String property, String value) {
         this.checkScenarioVariable(property, value);
+    }
+
+    @Given("^I mock feign api call (.*) (.*) with return code (.*) and body: (.*)$")
+    public void mockFeignCallWithJSON(String method, String resource, int status, String willReturnJson) throws URISyntaxException {
+        stubFeign(method, resource, status, MediaType.APPLICATION_JSON_VALUE, willReturnJson);
+    }
+
+    @Given("^I mock feign api call (.*) (.*) with return code (.*), content type: (.*) and file: (.*)$")
+    public void mockFeignCallWithFileContent(String method, String resource, int status, String contentType, String filePath) throws IOException, URISyntaxException {
+        stubFeign(method, resource, status, contentType, StreamUtils
+                .copyToString(getClass().getClassLoader()
+                        .getResourceAsStream(filePath), StandardCharsets.UTF_8));
     }
 }
