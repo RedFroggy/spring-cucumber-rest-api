@@ -113,6 +113,16 @@ abstract class AbstractBddStepDefinition {
     }
 
     /**
+     * Edit the http request body using a jsonPath and replace by the new value
+     */
+    void setBodyPathWithValue(String jsonPath, String value) {
+        assertThat(jsonPath).isNotEmpty();
+        assertThat(body).isNotNull();
+
+        body = JsonPath.parse(body).set(jsonPath, value).jsonString();
+    }
+
+    /**
      * Perform an http request Store the http response to responseEntity {@link #responseEntity}
      *
      * @param resource
