@@ -13,6 +13,7 @@ import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.restapi.scope.ScenarioScope;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -63,8 +64,10 @@ abstract class AbstractBddStepDefinition {
 
     protected static final ScenarioScope scenarioScope = new ScenarioScope();
 
-    private final WireMockRule wireMockServer = new WireMockRule(WireMockConfiguration
-            .wireMockConfig().port(8888).notifier(new ConsoleNotifier(true)));
+    @Value("${redfroggy.cucumber.restapi.wiremock.port}")
+    private int wireMockPort;
+
+    private WireMockRule wireMockServer;
 
     AbstractBddStepDefinition(TestRestTemplate testRestTemplate) {
         template = testRestTemplate;
@@ -78,6 +81,8 @@ abstract class AbstractBddStepDefinition {
 
     @PostConstruct
     public void setUp() {
+        wireMockServer = new WireMockRule(WireMockConfiguration
+                .wireMockConfig().port(wireMockPort).notifier(new ConsoleNotifier(true)));
         wireMockServer.start();
     }
 

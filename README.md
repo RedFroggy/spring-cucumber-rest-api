@@ -165,37 +165,16 @@ public class BasicAuthAuthentication implements BddRestTemplateAuthentication {
 ```
 
 ## Mock third party call
-If you need to mock a third party API, you can use [WireMock](http://wiremock.org/). 
-For example in your `@CucumberContextConfiguration` annotated class you can do :
+If you need to mock a third party API, you can use the following steps:
 
-```java
-@CucumberContextConfiguration
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class DefaultStepDefinition {
-    
-    @ClassRule
-    private static final WireMockClassRule wireMockServer = new WireMockClassRule(WireMockConfiguration
-            .wireMockConfig().port(8888).notifier(new ConsoleNotifier(true)));
-
-    @PostConstruct
-    public void setUp() {
-        wireMockServer.start();
-    }
-
-    @PreDestroy
-    public void stopWireMockServer() {
-        wireMockServer.stop();
-    }
-
-    @Given("^I mock api call (.*) (.*) with return code (.*) and body: (.*)$")
-    public void whenApiClient(String method, String resource, int status, String willReturnJson) {
-      wireMockServer.stubFor(WireMock.request(method, WireMock.urlPathMatching(resource))
-                .willReturn(WireMock.aResponse()
-                        .withStatus(status)
-                        .withBody(willReturnJson)));
-    }
-}
+```gherkin
+I mock third party api call (.*) (.*) with return code (.*) and body: (.*)
+I mock third party api call (.*) (.*) with return code (.*), content type: (.*) and file: (.*)
 ```
+
+It relies on [WireMock](http://wiremock.org) for stubbing third party api calls.
+By default the wiremock port is `8888`, if you need to override it you need to change the 
+`redfroggy.cucumber.restapi.wiremock.port` property oin your project.
 
 ## Run local unit tests
 
