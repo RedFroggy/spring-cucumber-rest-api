@@ -131,16 +131,29 @@ abstract class AbstractBddStepDefinition {
 
     /**
      * Set the http request body (POST request for example) {@link #body}
-     *
-     * @param body
-     *            json string body
-     * @throws IOException
-     *             json parse exception
+     * Must be a valid json format
      */
     void setBody(String body) throws IOException {
         assertThat(body).isNotEmpty();
         String sanitizedBody = replaceDynamicParameters(body, true);
         this.body = objectMapper.readValue(sanitizedBody, Object.class);
+    }
+
+    /**
+     * Set the http request body (POST request for example) {@link #body}
+     * with a file content
+     */
+    void setBodyWithFile(String filePath) throws IOException {
+        this.setBody(StreamUtils
+                .copyToString(getClass().getClassLoader()
+                        .getResourceAsStream(filePath), StandardCharsets.UTF_8));
+    }
+  
+    void setBodyPathWithValue(String jsonPath, String value) {
+        assertThat(jsonPath).isNotEmpty();
+        assertThat(body).isNotNull();
+
+        body = JsonPath.parse(body).set(jsonPath, value).jsonString();
     }
 
     /**

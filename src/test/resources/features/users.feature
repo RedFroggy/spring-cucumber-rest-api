@@ -18,6 +18,7 @@ Feature: Users api tests
   Scenario: Add tony stark user
     When I authenticate with login/password tstark/marvel
     And I set http body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"40", "sessionIds": ["43233333", "45654345"]}
+    And I set http body path $.age to 42
     And I POST /users
     Then http response header Content-Type should not be application/xml
     And http response code should be 201
@@ -27,7 +28,7 @@ Feature: Users api tests
     And http response body path $.relatedTo should be 1
     And http response body path $.firstName should be Tony
     And http response body path $.lastName should be Stark
-    And http response body path $.age should be 40
+    And http response body path $.age should be 42
     And http response body path $.sessionIds should be ["43233333", "45654345"]
     And http response body path $.sessionIds must not be []
     And I store the value of http body path $.id as starkUser in scenario scope
@@ -50,6 +51,17 @@ Feature: Users api tests
     And http response body path $.relatedTo.id should be 1
     And http response body path $.sessionIds should be ["43233333"]
 
+  Scenario: Add bruce banner user
+    And I set Authorization http header to `$authToken`
+    And I set http body with file fixtures/bruce-banner.user.json
+    And I POST /users
+    And http response code should be 201
+    And http response body path $.id should be 15948349393
+    And http response body path $.firstName should be Bruce
+    And http response body path $.lastName should be Banner
+    And http response body path $.age should be 45
+    And http response body path $.sessionIds should be ["99869448"]
+    
   Scenario: Update tony stark user
     When I mock third party api call GET /public/characters/1 with return code 200 and body: {"comicName": "IronMan", "city": "New York", "mainColor": ["red", "yellow"]}
     And I set http body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"60"}
@@ -75,7 +87,7 @@ Feature: Users api tests
     And http response body should be valid json
     Then http response code should be 200
     And http response body is typed as array for path $
-    And http response body is typed as array using path $ with length 2
+    And http response body is typed as array using path $ with length 3
     And http response body path $.[0].id should be `$starkUser`
     And http response body path $.[0].firstName should be Tony
     And http response body path $.[0].lastName should not be Wayne
@@ -84,7 +96,7 @@ Feature: Users api tests
     And http response body should contain Bruce
 
   Scenario: Search for valid users
-    And I set http query parameter name to bruce
+    And I set http query parameter name to wayne
     When I GET /users
     And http response body should be valid json
     Then http response code should be 200
@@ -138,6 +150,8 @@ Feature: Users api tests
     When I DELETE /users/1
     Then http response code should be 200
     And I DELETE /users/2
+    Then http response code should be 200
+    And I DELETE /users/15948349393
     Then http response code should be 200
     And  I GET /users
     And http response body is typed as array using path $ with length 0
