@@ -108,6 +108,7 @@ Feature: Users api tests
     And http response body path $.firstName should be Tony
     And http response body path $.lastName should be Stark
     And http response body path $.age should be 60
+    And http response body path $.details.comicName should be IronMan
     And I store the value of http response header Content-Type as httpContentType in scenario scope
     And http value of scenario variable httpContentType should be application/json
     And http response body should contain `$firstSessionId`
