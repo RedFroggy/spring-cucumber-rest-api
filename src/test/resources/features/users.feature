@@ -18,6 +18,7 @@ Feature: Users api tests
   Scenario: Add tony stark user
     When I authenticate with login/password tstark/marvel
     And I set http body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"40", "sessionIds": ["43233333", "45654345"]}
+    And I set http body path $.age to 42
     And I POST /users
     Then http response header Content-Type should not be application/xml
     And http response code should be 201
@@ -27,7 +28,7 @@ Feature: Users api tests
     And http response body path $.relatedTo should be 1
     And http response body path $.firstName should be Tony
     And http response body path $.lastName should be Stark
-    And http response body path $.age should be 40
+    And http response body path $.age should be 42
     And http response body path $.sessionIds should be ["43233333", "45654345"]
     And http response body path $.sessionIds must not be []
     And I store the value of http body path $.id as starkUser in scenario scope

@@ -1,6 +1,7 @@
 package fr.redfroggy.bdd.restapi.glue;
 
 import fr.redfroggy.bdd.restapi.authentication.BddRestTemplateAuthentication;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -59,6 +60,11 @@ public class DefaultRestApiBddStepDefinition extends AbstractBddStepDefinition {
     @Given("^I set http body with file (.*)$")
     public void setBodyWithFile(String filePath) throws IOException {
         super.setBodyWithFile(filePath);
+    }
+  
+    @And("^I set http body path (.*) to (.*)$")
+    public void setBodyWithJsonPath(String jsonPath, String value) {
+        this.setBodyPathWithValue(jsonPath, value);
     }
 
     /**
