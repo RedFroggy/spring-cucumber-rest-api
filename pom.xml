@@ -4,7 +4,7 @@
 
     <groupId>fr.redfroggy.test.bdd</groupId>
     <artifactId>cucumber-restapi</artifactId>
-    <version>1.7.1-SNAPSHOT</version>
+    <version>1.8.0</version>
 
     <name>Cucumber Spring rest Api</name>
     <description>REST API tests with Spring, Cucumber and Gherkin</description>
