@@ -169,12 +169,14 @@ If you need to mock a third party API, you can use the following steps:
 
 ```gherkin
 I mock third party api call (.*) (.*) with return code (.*) and body: (.*)
+  # Example: I mock third party api call GET /public/characters/1?format=json with return code 200 and body: {"comicName": "IronMan", "city": "New York", "mainColor": ["red", "yellow"]}
 I mock third party api call (.*) (.*) with return code (.*), content type: (.*) and file: (.*)
+  # Example: I mock third party api call GET /public/characters/2 with return code 200, content type: application/json and file: fixtures/bruce_wayne_marvel_api.fixture.json
 ```
 
-It relies on [WireMock](http://wiremock.org) for stubbing third party api calls.
-By default the wiremock port is `8888`, if you need to override it you need to change the 
-`redfroggy.cucumber.restapi.wiremock.port` property oin your project.
+It relies on [WireMock](http://wiremock.org) for stubbing api calls.
+By default, the wiremock port is `8888`, if you need to override it you need to change the 
+`redfroggy.cucumber.restapi.wiremock.port` property in your project.
 
 ## Run local unit tests
 
