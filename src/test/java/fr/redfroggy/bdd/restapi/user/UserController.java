@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import wiremock.org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +20,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 public final class UserController {
+
+    private final UserDetailService userDetailService;
+
+    public UserController(UserDetailService userDetailService) {
+        this.userDetailService = userDetailService;
+    }
 
     public static List<UserDTO> users = new ArrayList<>();
 
@@ -35,7 +40,7 @@ public final class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<UserDTO> get(@PathVariable("id") String id) {
+    public ResponseEntity<UserDTO> get(@PathVariable("id") String id, @RequestParam(required = false) String format) {
         UserDTO currentUser = users.stream().filter(u -> u.getId()
                 .equals(id)).findFirst()
                 .orElse(null);
@@ -43,6 +48,15 @@ public final class UserController {
             return ResponseEntity
                     .notFound().build();
         }
+
+        ResponseEntity<UserDetailsDTO> responseUserDetails = userDetailService.getUserDetails(currentUser.getId(), format);
+        Assert.assertNotNull(responseUserDetails);
+        if (!responseUserDetails.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.badRequest()
+                    .build();
+        }
+        currentUser.setDetails(responseUserDetails.getBody());
+
         return ResponseEntity.
                 ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

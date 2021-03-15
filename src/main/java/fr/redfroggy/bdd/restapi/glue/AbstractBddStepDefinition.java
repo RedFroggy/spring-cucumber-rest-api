@@ -1,20 +1,34 @@
 package fr.redfroggy.bdd.restapi.glue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import fr.redfroggy.bdd.restapi.scope.ScenarioScope;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -51,6 +65,11 @@ abstract class AbstractBddStepDefinition {
 
     protected static final ScenarioScope scenarioScope = new ScenarioScope();
 
+    @Value("${redfroggy.cucumber.restapi.wiremock.port}")
+    private int wireMockPort;
+
+    private WireMockRule wireMockServer;
+
     AbstractBddStepDefinition(TestRestTemplate testRestTemplate) {
         template = testRestTemplate;
         objectMapper = new ObjectMapper();
@@ -59,6 +78,18 @@ abstract class AbstractBddStepDefinition {
 
         // Add support for PATCH requests
         testRestTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+    }
+
+    @PostConstruct
+    public void setUp() {
+        wireMockServer = new WireMockRule(WireMockConfiguration
+                .wireMockConfig().port(wireMockPort).notifier(new ConsoleNotifier(true)));
+        wireMockServer.start();
+    }
+
+    @PreDestroy
+    public void stopWireMockServer() {
+        wireMockServer.stop();
     }
 
     /**
@@ -160,10 +191,8 @@ abstract class AbstractBddStepDefinition {
 
     void postMultipart(String method, String uri, List<Map<String, String>> data) {
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        data.forEach(row -> {
-            parameters.add(row.get("Name"),
-                    new org.springframework.core.io.ClassPathResource(row.get("Filepath")));
-        });
+        data.forEach(row -> parameters.add(row.get("Name"),
+                new org.springframework.core.io.ClassPathResource(row.get("Filepath"))));
 
         this.headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         this.body = parameters;
@@ -421,5 +450,33 @@ abstract class AbstractBddStepDefinition {
                     scopeValue.toString()), jsonPath);
         }
         return value;
+    }
+
+    protected void mockThirdPartyApiCall(String method, String resource, int status, String mediaType, String body) throws URISyntaxException {
+
+        String url = resource;
+        MappingBuilder mappingBuilder;
+
+        List<NameValuePair> params = URLEncodedUtils.parse(new URI(resource), StandardCharsets.UTF_8);
+        if (!CollectionUtils.isEmpty(params)) {
+
+            Map<String, StringValuePattern> queryParams = new HashMap<>();
+
+            params.forEach(nameValuePair -> queryParams.put(nameValuePair.getName(),
+                    new EqualToPattern(nameValuePair.getValue())));
+
+            url = resource.substring(0, resource.indexOf("?"));
+            mappingBuilder = WireMock.request(method, WireMock.urlPathMatching(url));
+            mappingBuilder.withQueryParams(queryParams);
+        } else {
+            mappingBuilder = WireMock.request(method, WireMock.urlPathMatching(url));
+        }
+
+        wireMockServer.stubFor(mappingBuilder
+                .willReturn(WireMock.aResponse()
+                        .withHeader(HttpHeaders.CONTENT_TYPE, mediaType)
+                        .withHeader(HttpHeaders.ACCEPT, mediaType)
+                        .withStatus(status)
+                        .withBody(body)));
     }
 }
