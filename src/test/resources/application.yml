@@ -1,6 +1,6 @@
 marvel:
   api:
-    host: https://gateway.marvel.com
+    host: http://localhost:8888
 
 redfroggy:
   cucumber.restapi.wiremock.port: 8888

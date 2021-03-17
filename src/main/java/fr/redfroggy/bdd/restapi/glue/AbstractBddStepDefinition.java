@@ -65,7 +65,7 @@ abstract class AbstractBddStepDefinition {
 
     protected static final ScenarioScope scenarioScope = new ScenarioScope();
 
-    @Value("${redfroggy.cucumber.restapi.wiremock.port}")
+    @Value("${redfroggy.cucumber.restapi.wiremock.port:8888}")
     private int wireMockPort;
 
     private WireMockRule wireMockServer;
