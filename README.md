@@ -22,6 +22,8 @@
 
 Made with , [Cucumber](https://cucumber.io/) and [Gherkin](https://cucumber.io/docs/gherkin/) !
 Inspired from the awesome [apickli project](https://github.com/apickli/apickli) project.
+<br/>
+To test your messaging system with cucumber, gherkin please use this [library](https://github.com/RedFroggy/spring-cucumber-messaging)
 
 ## Stack
 - Spring Boot
