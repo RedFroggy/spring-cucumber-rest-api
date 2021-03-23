@@ -109,7 +109,7 @@ Feature: Users api tests
     And http response body path $.sessionIds should be ["99869448"]
 
   Scenario: Update tony stark user
-    When I mock third party api call GET /public/characters/1 with return code 200 and body: {"comicName": "IronMan", "city": "New York", "mainColor": ["red", "yellow"]}
+    When I mock third party api call GET /public/characters/1 with return code 200, content type: application/json and body: {"comicName": "IronMan", "city": "New York", "mainColor": ["red", "yellow"]}
     And I set http body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"60"}
     And I PUT /users/1
     Then http response code should be 200
@@ -119,7 +119,7 @@ Feature: Users api tests
     And http response body path $.age should be 60
 
   Scenario: Patch bruce wayne user
-    When I mock third party api call GET /public/characters/2 with return code 200 and body: {"comicName": "Batman", "city": "Gotham City", "mainColor": ["black"]}
+    When I mock third party api call GET /public/characters/2 with return code 200, content type: application/json and body: {"comicName": "Batman", "city": "Gotham City", "mainColor": ["black"]}
     And I set http body to {"lastName":"WAYNE"}
     And I PATCH /users/2
     Then http response code should be 200
@@ -159,7 +159,7 @@ Feature: Users api tests
     And http response body path $ should not have content
 
   Scenario: Get user Tony Stark
-    When I mock third party api call GET /public/characters/1?format=json with return code 200 and body: {"comicName": "IronMan", "city": "New York", "mainColor": ["red", "yellow"]}
+    When I mock third party api call GET /public/characters/1?format=json with return code 200, content type: application/json and body: {"comicName": "IronMan", "city": "New York", "mainColor": ["red", "yellow"]}
     And I GET /users/1?format=json
     Then http response code should be 200
     And http response body path $.id should be 1
@@ -202,17 +202,6 @@ Feature: Users api tests
     And  I GET /users
     And http response body is typed as array using path $ with length 0
     And http response body path $ should not have content
-
-  Scenario: Should import users csv file
-    When I send a multipart POST request to /api/users with:
-      | Name               | Filepath             |
-      | file               | upload/users.csv     |
-    Then http response code should be 200
-    And http response body is typed as array using path $ with length 2
-    And http response body path $.[0].id should be 123
-    And http response body path $.[0].firstName should be Peter
-    And http response body path $.[0].lastName should be Parker
-    And http response body path $.[0].age should be 22
 
 ```
 
