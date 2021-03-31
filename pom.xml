@@ -54,7 +54,7 @@
         <assertj.version>3.19.0</assertj.version>
         <commons-io.version>2.8.0</commons-io.version>
         <httpclient.version>4.5.13</httpclient.version>
-        <open-csv.version>4.2</open-csv.version>
+        <open-csv.version>4.6</open-csv.version>
     </properties>
 
     <!-- Define where the source code for this project lives -->
