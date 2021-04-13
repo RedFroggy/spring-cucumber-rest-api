@@ -1,2 +1,0 @@
-redfroggy:
-  cucumber.restapi.wiremock.port: 8888
