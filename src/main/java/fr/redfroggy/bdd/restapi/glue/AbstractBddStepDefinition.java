@@ -193,8 +193,9 @@ abstract class AbstractBddStepDefinition {
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         data.forEach(row -> {
             LinkedMultiValueMap<String, Object> entityHeaders = new LinkedMultiValueMap<>();
-            entityHeaders.add("Content-Disposition", String.format("form-data; name=%s; filename=%s", row.get("Name"), row.get("Name")));
-            entityHeaders.add("Content-Type", row.get("Content-Type"));
+            entityHeaders.add(HttpHeaders.CONTENT_DISPOSITION, String.format("form-data; name=%s; filename=%s",
+                    row.get("Name"), row.get("Name")));
+            entityHeaders.add(HttpHeaders.CONTENT_TYPE, row.get(HttpHeaders.CONTENT_TYPE));
 
             HttpEntity<Object> entity = new HttpEntity(
                     new org.springframework.core.io.ClassPathResource(row.get("Filepath")),
