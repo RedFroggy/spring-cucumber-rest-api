@@ -4,8 +4,8 @@ Feature: Users import api tests
   @import
   Scenario: Should import users csv file
     When I send a multipart POST request to /api/users with:
-      | Name               | Filepath             |
-      | file               | upload/users.csv     |
+      | Name               | Filepath             |   Content-Type        |
+      | file               | upload/users.csv     |   text/csv            |
     Then http response code should be 200
     And http response body is typed as array using path $ with length 2
     And http response body path $.[0].id should be 123

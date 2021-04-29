@@ -191,8 +191,20 @@ abstract class AbstractBddStepDefinition {
 
     void postMultipart(String method, String uri, List<Map<String, String>> data) {
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        data.forEach(row -> parameters.add(row.get("Name"),
-                new org.springframework.core.io.ClassPathResource(row.get("Filepath"))));
+        data.forEach(row -> {
+            LinkedMultiValueMap<String, Object> entityHeaders = new LinkedMultiValueMap<>();
+            entityHeaders.add("Content-Disposition", String.format("form-data; name=%s; filename=%s", row.get("Name"), row.get("Name")));
+            entityHeaders.add("Content-Type", row.get("Content-Type"));
+
+            HttpEntity<Object> entity = new HttpEntity(
+                    new org.springframework.core.io.ClassPathResource(row.get("Filepath")),
+                    entityHeaders);
+
+            parameters.add(
+                    row.get("Name"),
+                    entity
+            );
+        });
 
         this.headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         this.body = parameters;
