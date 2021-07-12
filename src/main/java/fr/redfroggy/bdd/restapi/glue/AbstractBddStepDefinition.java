@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -149,7 +151,7 @@ abstract class AbstractBddStepDefinition {
                 .copyToString(getClass().getClassLoader()
                         .getResourceAsStream(filePath), StandardCharsets.UTF_8));
     }
-  
+
     void setBodyPathWithValue(String jsonPath, String value) {
         assertThat(jsonPath).isNotEmpty();
         assertThat(body).isNotNull();
@@ -193,8 +195,9 @@ abstract class AbstractBddStepDefinition {
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         data.forEach(row -> {
             LinkedMultiValueMap<String, Object> entityHeaders = new LinkedMultiValueMap<>();
+            String filename = getFilenameFromPath(row.get("Filepath"));
             entityHeaders.add(HttpHeaders.CONTENT_DISPOSITION, String.format("form-data; name=%s; filename=%s",
-                    row.get("Name"), row.get("Name")));
+                    row.get("Name"), filename));
             entityHeaders.add(HttpHeaders.CONTENT_TYPE, row.get(HttpHeaders.CONTENT_TYPE));
 
             HttpEntity<Object> entity = new HttpEntity(
@@ -491,5 +494,19 @@ abstract class AbstractBddStepDefinition {
                         .withHeader(HttpHeaders.ACCEPT, mediaType)
                         .withStatus(status)
                         .withBody(body)));
+    }
+
+    /**
+     * Extract file name from file path.
+     *
+     * @param filepath Filepath
+     * @return Extract the last part of the file path
+     */
+    private String getFilenameFromPath(String filepath) {
+        return Optional.ofNullable(filepath)
+                .map(Paths::get)
+                .map(Path::getFileName)
+                .map(Path::toString)
+                .orElse(filepath);
     }
 }
