@@ -43,7 +43,7 @@
     <properties>
         <cucumber-version>6.10.2</cucumber-version>
         <jsonpath-version>2.5.0</jsonpath-version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <git-commit-id-plugin.version>4.0.4</git-commit-id-plugin.version>
