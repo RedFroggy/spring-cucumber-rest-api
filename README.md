@@ -223,7 +223,6 @@ When I DELETE /users/`$idUser`
 And I set Authorization header to `$authHeader`
 ```
 
-
 ## How to use it in my existing project ?
 
 You can see a usage example in the [test folder](src/test/java/fr/redfroggy/bdd/restapi).
