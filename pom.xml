@@ -37,24 +37,24 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.2</version>
+        <version>2.5.3</version>
     </parent>
 
     <properties>
         <cucumber-version>6.10.4</cucumber-version>
-        <jsonpath-version>2.5.0</jsonpath-version>
+        <jsonpath-version>2.6.0</jsonpath-version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
-        <git-commit-id-plugin.version>4.0.4</git-commit-id-plugin.version>
+        <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
         <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <wiremock.version>2.27.2</wiremock.version>
         <assertj.version>3.20.2</assertj.version>
-        <commons-io.version>2.10.0</commons-io.version>
+        <commons-io.version>2.11.0</commons-io.version>
         <httpclient.version>4.5.13</httpclient.version>
-        <open-csv.version>5.4</open-csv.version>
+        <open-csv.version>5.5.1</open-csv.version>
     </properties>
 
     <!-- Define where the source code for this project lives -->
