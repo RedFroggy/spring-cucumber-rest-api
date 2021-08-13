@@ -51,7 +51,7 @@
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <wiremock.version>2.27.2</wiremock.version>
-        <assertj.version>3.19.0</assertj.version>
+        <assertj.version>3.20.2</assertj.version>
         <commons-io.version>2.11.0</commons-io.version>
         <httpclient.version>4.5.13</httpclient.version>
         <open-csv.version>5.5.1</open-csv.version>
