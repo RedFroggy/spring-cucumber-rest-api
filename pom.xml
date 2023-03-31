@@ -53,7 +53,7 @@
         <wiremock.version>2.27.2</wiremock.version>
         <assertj.version>3.20.2</assertj.version>
         <commons-io.version>2.11.0</commons-io.version>
-        <httpclient.version>4.5.13</httpclient.version>
+        <httpclient.version>4.5.14</httpclient.version>
         <open-csv.version>5.5.1</open-csv.version>
     </properties>
 
